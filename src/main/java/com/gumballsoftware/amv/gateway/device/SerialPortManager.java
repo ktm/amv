@@ -1,11 +1,10 @@
 package com.gumballsoftware.amv.gateway.device;
 
-
 import jssc.SerialPort;
+import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,16 +53,21 @@ public class SerialPortManager {
         if (uart.writeBytes(data)) {
             return data.length;
         }
-
         return 0;
     }
 
-    public byte[] readFromUart(String handle, int buffSize) throws SerialPortException {
+    public byte[] readBytes(String handle, int buffSize) throws SerialPortException {
         SerialPort uart = uartMap.get(handle);
         return uart.readBytes();
     }
 
-    public byte[] readFromUart(String handle) throws SerialPortException {
-        return readFromUart(handle, 10);
+    public String readFromUart(String handle) throws SerialPortException {
+        SerialPort uart = uartMap.get(handle);
+        return uart.readString();
+    }
+
+    public void addSerialPortEventListener(String handle, SerialPortEventListener listener, int mask) throws SerialPortException {
+        SerialPort uart = uartMap.get(handle);
+        uart.addEventListener(listener, mask);
     }
 }
