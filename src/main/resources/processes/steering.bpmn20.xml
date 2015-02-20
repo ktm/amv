@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:amv="http://www.gumballsoftware.com/amv" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://sourceforge.net/bpmn/definitions/_1420394188414" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yaoqiang="http://bpmn.sourceforge.net" exporter="Yaoqiang BPMN Editor" exporterVersion="4.0" expressionLanguage="http://www.w3.org/1999/XPath" id="_1420394188414" name="Steering" targetNamespace="http://sourceforge.net/bpmn/definitions/_1420394188414" typeLanguage="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+  <signal id="setSteeringSignalID" name="setSteering"/>
+  <signal id="missionStartSignalID" name="missionStart"/>
+  <signal id="missionStopSignalID" name="missionStop"/>
+  <process id="STEERING_PROCESS" isClosed="false" isExecutable="true" processType="None">
+    <extensionElements>
+      <yaoqiang:pageFormat height="841.8897637795276" imageableHeight="831.8897637795276" imageableWidth="588.1102362204724" imageableX="5.0" imageableY="5.0" orientation="0" width="598.1102362204724"/>
+      <yaoqiang:page background="#FFFFFF" horizontalCount="1" verticalCount="1"/>
+    </extensionElements>
+    <serviceTask activiti:expression="#{serialPortManager.writeCommand('steeringHandle', 'navCourse')}" completionQuantity="1" id="setSteeringServoTaskID" implementation="##WebService" isForCompensation="false" name="setSteeringServo" startQuantity="1">
+      <incoming>goToSetSteeringServoID</incoming>
+      <outgoing>_12</outgoing>
+    </serviceTask>
+    <sequenceFlow id="goToInitCommID" sourceRef="missionStartEventID" targetRef="initCommTaskID"/>
+    <serviceTask activiti:expression="#{serialPortManager.connectToDevice('steeringHandle', '/dev/ttyACM0')}" activiti:resultVariable="steeringHandle" completionQuantity="1" id="initCommTaskID" implementation="##WebService" isForCompensation="false" name="initComm" startQuantity="1">
+      <incoming>goToInitCommID</incoming>
+      <outgoing>goToSteerLoopID</outgoing>
+    </serviceTask>
+    <sequenceFlow id="goToSteerLoopID" sourceRef="initCommTaskID" targetRef="catchCourseChangeEventID"/>
+    <sequenceFlow id="goToSetSteeringServoID" sourceRef="catchCourseChangeEventID" targetRef="setSteeringServoTaskID"/>
+    <intermediateCatchEvent id="catchCourseChangeEventID" name="Wait for Course Change" parallelMultiple="false">
+      <incoming>stopEvent1ID</incoming>
+      <incoming>goToSteerLoopID</incoming>
+      <incoming>_12</incoming>
+      <outgoing>goToSetSteeringServoID</outgoing>
+      <signalEventDefinition id="steeringSignalEventDefinition" signalRef="setSteeringSignalID"/>
+    </intermediateCatchEvent>
+    <startEvent id="missionStartEventID" isInterrupting="true" name="Mission Started" parallelMultiple="false">
+      <outgoing>goToInitCommID</outgoing>
+      <signalEventDefinition id="missionStartSignal" signalRef="missionStartSignalID"/>
+    </startEvent>
+    <sequenceFlow id="_12" sourceRef="setSteeringServoTaskID" targetRef="catchCourseChangeEventID"/>
+  </process>
+  <bpmndi:BPMNDiagram id="Yaoqiang_Diagram-_1" name="Untitled Diagram" resolution="96.0">
+    <bpmndi:BPMNPlane bpmnElement="STEERING_PROCESS">
+      <bpmndi:BPMNShape bpmnElement="initCommTaskID" id="Yaoqiang-initCommTaskID">
+        <dc:Bounds height="55.0" width="85.0" x="322.0" y="184.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8046875" width="60.0" x="334.5" y="204.09765625"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="setSteeringServoTaskID" id="Yaoqiang-setSteeringServoTaskID">
+        <dc:Bounds height="55.0" width="85.0" x="495.0" y="438.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8046875" width="72.0" x="501.5" y="451.09765625"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="catchCourseChangeEventID" id="Yaoqiang-catchCourseChangeEventID">
+        <dc:Bounds height="32.0" width="32.0" x="526.0" y="284.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8046875" width="141.0" x="471.5" y="325.28125"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="missionStartEventID" id="Yaoqiang-missionStartEventID">
+        <dc:Bounds height="32.0" width="32.0" x="161.0" y="195.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8046875" width="95.0" x="129.5" y="236.28125"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_12" id="Yaoqiang-_12">
+        <di:waypoint x="580.0555555555555" y="465.50000000000006"/>
+        <di:waypoint x="618.3888888888889" y="505.1666666666667"/>
+        <di:waypoint x="558.0508287771075" y="300.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8046875" width="6.0" x="615.3888888888889" y="362.34529286077606"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="goToSteerLoopID" id="Yaoqiang-goToSteerLoopID">
+        <di:waypoint x="407.05555555555554" y="211.5"/>
+        <di:waypoint x="538.3888888888889" y="247.3888888888889"/>
+        <di:waypoint x="538.3888888888889" y="284.03691592947956"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8046875" width="6.0" x="505.990680186962" y="202.09765625"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="goToSetSteeringServoID" id="Yaoqiang-goToSetSteeringServoID">
+        <di:waypoint x="526.0602823340035" y="300.0"/>
+        <di:waypoint x="459.5" y="365.1666666666667"/>
+        <di:waypoint x="495.05555555555554" y="465.50000000000006"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8046875" width="6.0" x="456.5" y="357.84529286077606"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="goToInitCommID" id="Yaoqiang-goToInitCommID">
+        <di:waypoint x="193.05082877710754" y="211.0"/>
+        <di:waypoint x="322.05555555555554" y="211.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8046875" width="6.0" x="254.5" y="201.90084841633154"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

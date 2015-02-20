@@ -13,9 +13,13 @@
   <groupId>com.gumballsoftware.amv</groupId>
   <artifactId>AMV</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <name>AMV</name>
   <description>AMV from Spring Boot</description>
+  <properties>
+      <!-- The main class to start by executing java -jar -->
+      <start-class>com.gumballsoftware.amv.Application</start-class>
+  </properties>
 
   <dependencies>
       <dependency>
@@ -53,24 +57,36 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-compiler-plugin</artifactId>
-	  <configuration>
-	    <source>1.7</source>
-	    <target>1.7</target>
-	  </configuration>
-	</plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-  <repositories>
+    <repositories>
     <repository>
       <id>spring-snapshots</id>
       <name>Spring Snapshots</name>

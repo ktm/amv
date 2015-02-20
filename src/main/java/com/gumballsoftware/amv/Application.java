@@ -1,13 +1,11 @@
 package com.gumballsoftware.amv;
 
-import org.activiti.engine.RuntimeService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Created by ktm on 1/15/15.
@@ -15,7 +13,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-public class AMVApplication {
+public class Application {
 
     @Bean
     CommandLineRunner init(final ActivitiService as) {
@@ -27,9 +25,8 @@ public class AMVApplication {
         };
     }
 
-
    public static void main(String args[]) {
-       SpringApplication.run(AMVApplication.class, args);
+       SpringApplication.run(Application.class, args);
    }
 }
 

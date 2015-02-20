@@ -1,8 +1,10 @@
 package com.gumballsoftware.amv.gateway.device;
 
+import com.gumballsoftware.amv.model.GlobalContext;
 import jssc.SerialPort;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.ByteBuffer;
@@ -14,6 +16,10 @@ import java.util.Map;
  */
 @Component
 public class SerialPortManager {
+
+    @Autowired
+    GlobalContext globalContext;
+
     Map<String, SerialPort> uartMap = new HashMap<>();
 
     public String connectToDevice(String handle, String devName) throws SerialPortException {
@@ -25,22 +31,22 @@ public class SerialPortManager {
                 SerialPort.PARITY_NONE);
 
         uartMap.put(handle, serialPort);
-
-        byte command = (byte)0xFF;
-        byte channel = (byte)0x00;
-        byte center = 0x7F;
-        byte leftMost = 0x00;
-        int rightMost = 0xFE;
-
-        byte[] bytes = new byte[]{command,  channel, leftMost};
-        serialPort.writeBytes(bytes);
-
-        try {Thread.sleep(2000);}catch (Throwable ignore) {}
-
-        bytes[2] = (byte)rightMost;
-        serialPort.writeBytes(bytes);
-
         return handle;
+    }
+
+    public void writeCommand(String handle, String commandName) throws SerialPortException {
+        byte att     = (byte)0xFF;
+        byte channel = (byte)0x00;
+
+        Object obj = globalContext.getVar(commandName);
+        if (obj instanceof byte[]) {
+            byte[] bytes = (byte[])obj;
+            SerialPort uart = uartMap.get(handle);
+            if (uart == null) {
+                throw new RuntimeException("writeCommand got unknown handle: " + handle);
+            }
+            uart.writeBytes(bytes);
+        }
     }
 
     public int writeToUart(String handle, String value) throws SerialPortException {
