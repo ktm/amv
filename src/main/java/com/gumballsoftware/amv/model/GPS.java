@@ -1,9 +1,12 @@
 package com.gumballsoftware.amv.model;
 
+import javax.xml.stream.*;
+import java.io.Serializable;
+
 /**
  * Created by ktm on 2/3/15.
  */
-public class GPS {
+public class GPS implements Serializable, Location {
     private double speed;
     private double latitude;
     private double longitude;

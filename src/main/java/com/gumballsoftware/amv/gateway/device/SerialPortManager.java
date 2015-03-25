@@ -62,7 +62,7 @@ public class SerialPortManager {
         return 0;
     }
 
-    public byte[] readBytes(String handle, int buffSize) throws SerialPortException {
+    public byte[] readBytes(String handle) throws SerialPortException {
         SerialPort uart = uartMap.get(handle);
         return uart.readBytes();
     }
