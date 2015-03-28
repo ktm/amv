@@ -21,7 +21,7 @@ dependencies {
    compile "org.activiti:activiti-engine:5.17.0"
    compile "org.springframework.boot:spring-boot-starter:1.2.2.RELEASE"
    compile "org.springframework.boot:spring-boot-starter-test:1.2.2.RELEASE"
-   compile "org.activiti:spring-boot-starters:5.17.0"
+   compile "org.activiti:spring-boot-starter-basic:5.17.0"
    compile "org.activiti:spring-boot:5.17.0"
    compile "org.scream3r:jssc:2.8.0"
    compile "net.sf.marineapi:marineapi:0.8.1"

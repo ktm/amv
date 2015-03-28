@@ -29,7 +29,7 @@ public class ActivitiService {
     }
 
     public void start() {
-        startProcess("startdevices");
+        startProcess("STEERING_PROCESS");
     }
 
     public void startProcess(String processKey) {
