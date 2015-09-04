@@ -8,5 +8,6 @@
 
 int main() {
     ProcessTest * sse = new ProcessTest();
+    sse->testContext();
     sse->testStartEvent();
 }
