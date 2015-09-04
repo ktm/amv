@@ -1,1 +1,1 @@
-Hacking spring-boot, activiti, and BPMN 2 on the Raspberry Pi
+Hacking BPMN 2 on the Raspberry Pi
