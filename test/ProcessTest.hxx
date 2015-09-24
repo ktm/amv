@@ -16,6 +16,11 @@ class ProcessTest {
 public:
     ProcessTest(){}
 
+    void testAllTheThings() {
+        testContext();
+        testStartEvent();
+    }
+
     void testContext() {
         Process* p = new Process("anonymousStartEvent");
         StartEvent* se = new StartEvent("start");
@@ -26,7 +31,6 @@ public:
         p->onStartEvent(testEvent);
 
         assert(p->currentNode->getId().compare("start") == 0);
-        cout << "testContext did not fail, but context is not yet implemented." << endl;
     }
 
     void testStartEvent() {

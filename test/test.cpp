@@ -5,9 +5,12 @@
 #define TEST
 
 #include "ProcessTest.hxx"
+#include "ContextTest.hxx"
 
 int main() {
     ProcessTest * sse = new ProcessTest();
-    sse->testContext();
-    sse->testStartEvent();
+    sse->testAllTheThings();
+
+    ContextTest* contextTest = new ContextTest();
+    contextTest->testAllTheThings();
 }

@@ -17,9 +17,6 @@ using namespace std;
 
 const char* DEFAULT_SEQUENCE = "default";
 
-using NameValuePair = pair<string, string>;
-using NameValuePairPtr = shared_ptr<NameValuePair>;
-
 struct SequenceConditionPair {
     SequenceConditionPair(string a, string b) : targetElementId(a),condition(b) {}
     string targetElementId;

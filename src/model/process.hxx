@@ -5,8 +5,10 @@
 #ifndef AMVMODEL_PROCESS_H
 #define AMVMODEL_PROCESS_H
 
-#include "process_node.hxx"
+#include "context.hxx"
 #include "event.hxx"
+#include "process_node.hxx"
+#include "../collection/name_value_pair.hxx"
 
 #include <algorithm>
 #include <list>
@@ -69,7 +71,7 @@ protected:
     }
 
     void updateContext(string name, string value) {
-        cout << "updateContext name: " << name << " value: " << value << endl;
+        Context::Instance().write(name, value);
     }
 
     void executeNode(ProcessNodePtr node) {
