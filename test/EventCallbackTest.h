@@ -10,10 +10,10 @@
 #include "../src/collection/name_value_pair.hxx"
 #include "../src/model/event_callback_container.hxx"
 
-class EventBusTest {
+class EventCallbackTest {
 
 public:
-    EventBusTest() { }
+    EventCallbackTest() { }
 
     void testAllTheThings() {
         testCallback();
