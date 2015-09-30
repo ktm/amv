@@ -6,15 +6,15 @@
 
 #include "ProcessTest.hxx"
 #include "ContextTest.hxx"
-#include "EventBusTest.h"
+#include "EventCallbackTest.h"
 
 int main() {
-    ProcessTest * sse = new ProcessTest();
-//    sse->testAllTheThings();
+    ProcessTest sse;
+    sse.testAllTheThings();
 
-    ContextTest* contextTest = new ContextTest();
-//    contextTest->testAllTheThings();
+    ContextTest contextTest;
+    contextTest.testAllTheThings();
 
-    EventBusTest* eventBusTest = new EventBusTest();
-    eventBusTest->testAllTheThings();
+    EventCallbackTest eventBusTest;
+    eventBusTest.testAllTheThings();
 }

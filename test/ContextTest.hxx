@@ -13,6 +13,7 @@
 #include <thread>
 
 #include "../src/model/context.hxx"
+#include "../src/model/event_callback_container.hxx"
 
 class ContextTest {
 
@@ -82,6 +83,7 @@ public:
 
     void testMultipleSetAndGet() {
         cout << "hardware concurrency: " << std::thread::hardware_concurrency() << endl;
+
         std::chrono::system_clock::time_point soon = std::chrono::system_clock::now() + std::chrono::seconds(5);
 
         std::thread t1(call_from_thread, soon);

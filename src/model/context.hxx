@@ -9,6 +9,7 @@
 #include "process_node.hxx"
 #include "../collection/name_value_pair.hxx"
 #include "../collection/threadsafe_queue.hxx"
+#include "event_callback_container.hxx"
 
 /*
  *
@@ -20,9 +21,8 @@
 class Context {
     std::vector<NameValuePairPtr> contextData;
     std::mutex data_mutex;
-    threadsafe_queue<string> change_queue;
 
-    Context():contextData(24),change_queue() {};
+    Context():contextData(24) {};
     ~Context() {};
 
     NameValuePairPtr find(string name) {
@@ -39,14 +39,16 @@ class Context {
         return *list;
     }
 
-    void _write(string name, string value) {
+    NameValuePairPtr _write(string name, string value) {
         std::lock_guard<std::mutex> data_lock(data_mutex);
         NameValuePairPtr npp = find(name);
         if (npp == nullptr) {
-            contextData.push_back(make_shared<NameValuePair>(name, value));
+            npp = make_shared<NameValuePair>(name, value);
+            contextData.push_back(npp);
         } else {
             npp->second = value;
         }
+        return npp;
     }
 
 public:
@@ -55,13 +57,14 @@ public:
         return CTX;
     }
 
-    void write(NameValuePairPtr nvp) {
-        write(nvp->first, nvp->second);
+    NameValuePairPtr write(NameValuePairPtr nvp) {
+        return write(nvp->first, nvp->second);
     }
 
-    void write(string name, string value) {
-        _write(name, value);
-        change_queue.push(name);
+    NameValuePairPtr write(string name, string value) {
+        NameValuePairPtr nvp = _write(name, value);
+        EventCallbackContainer::Instance().fireEvent(nvp);
+        return nvp;
     }
 
     string read(string name) {
@@ -70,7 +73,7 @@ public:
         if (npp != nullptr) {
             return npp->second;
         }
-        return "";
+        return "";  // really want to return nullptr here but it breaks stuff
     }
 };
 

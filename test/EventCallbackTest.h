@@ -20,20 +20,24 @@ public:
     }
 
     void testCallback() {
-        EventCallbackContainer * eb = new EventCallbackContainer();
+        cout << "EventCallbackTest.testCallback begin..." << endl;
         static bool callbackFired = false;
 
-        eb->addCallback("testcb", [](NameValuePairPtr nvp){
+        EventCallbackContainer::Instance().addCallback("testcb", [](NameValuePairPtr nvp){
             callbackFired = true;
         });
 
         NameValuePairPtr nvp = make_shared<NameValuePair> ("x", "xyz");
-        eb->fireEvent("testcb", nvp);
+        EventCallbackContainer::Instance().fireEvent("testcb", nvp);
+        this_thread::sleep_for(2s);
         assert(callbackFired);
 
         callbackFired = false;
-        eb->fireEvent("X", nvp);
+        EventCallbackContainer::Instance().fireEvent("X", nvp);
+        this_thread::sleep_for(2s);
         assert(!callbackFired);
+
+        cout << "...EventCallbackTest.testCallback end" << endl;
     }
 
 };
