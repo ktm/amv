@@ -43,6 +43,10 @@ public:
        fireEvent(nvp->first, nvp);
     }
 
+    void fireEvent(std::string name) {
+        fireEvent(name, nullptr);
+    }
+
     void fireEvent(std::string name, NameValuePairPtr nvp) {
         std::pair <EventCallbackMMap::iterator, EventCallbackMMap::iterator> callbackRange;
         callbackRange = callbackMap.equal_range(name);

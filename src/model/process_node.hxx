@@ -44,11 +44,19 @@ public:
         setProcessNodeType(t);
     }
 
+    ProcessNode(ProcessNodeT t, string idarg):id(idarg){
+        setProcessNodeType(t);
+    }
+
     void setProcessNodeType(ProcessNodeT arg) {
         elementType = arg;
     }
 
     void setId(const char* idarg) {
+        id = idarg;
+    }
+
+    void setId(string idarg) {
         id = idarg;
     }
 
@@ -77,6 +85,10 @@ public:
 
     ProcessNodeT getProcessNodeType() {
         return elementType;
+    }
+
+    bool matches(string idarg) {
+        return getId() == idarg;
     }
 };
 

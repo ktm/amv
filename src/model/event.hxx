@@ -14,7 +14,7 @@ class BaseEvent {
     friend class Process;
 
 public:
-    BaseEvent(const char* name): eventName(name) {
+    BaseEvent(string name): eventName(name) {
     }
 
     void addNVP(std::string name, std::string value) {
@@ -28,31 +28,31 @@ public:
 
 class ContextEvent: public BaseEvent {
 public:
-    ContextEvent(const char* name) : BaseEvent(name) {}
+    ContextEvent(string name) : BaseEvent(name) {}
 };
 
 class ProcessEvent: public BaseEvent, public ProcessNode {
 public:
-    ProcessEvent(ProcessNodeT t, const char* name): ProcessNode(t), BaseEvent(name) {}
+    ProcessEvent(ProcessNodeT t, string name): ProcessNode(t, name), BaseEvent(name) {}
 };
 
 class StartEvent: public ProcessEvent {
 public:
-    StartEvent(const char* name) : ProcessEvent(ProcessNodeT::startEvent, name) {
+    StartEvent(string name) : ProcessEvent(ProcessNodeT::startEvent, name) {
         setId(name);
     }
 };
 
 class EndEvent: public ProcessEvent {
 public:
-    EndEvent(const char* name) : ProcessEvent(ProcessNodeT::endEvent, name) {
+    EndEvent(string name) : ProcessEvent(ProcessNodeT::endEvent, name) {
         setId(name);
     }
 };
 
 class SignalEvent : public ProcessEvent {
 public:
-    SignalEvent(const char* name) : ProcessEvent(ProcessNodeT::signalEvent, name) {}
+    SignalEvent(string name) : ProcessEvent(ProcessNodeT::signalEvent, name) {}
 };
 
 using EndEventPtr = shared_ptr<EndEvent>;

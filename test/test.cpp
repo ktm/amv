@@ -9,12 +9,12 @@
 #include "EventCallbackTest.h"
 
 int main() {
-    ProcessTest sse;
-    sse.testAllTheThings();
-
     ContextTest contextTest;
     contextTest.testAllTheThings();
 
     EventCallbackTest eventBusTest;
     eventBusTest.testAllTheThings();
+
+    ProcessTest sse;
+    sse.testAllTheThings();
 }

@@ -21,11 +21,9 @@ public:
     ContextTest(){ }
 
     void testAllTheThings() {
-        /*
         testSingleton();
         testSingleSetAndGet("test", "frog");
         testSingleUpdate();
-        */
         testMultipleSetAndGet();
     }
 

@@ -92,6 +92,10 @@ protected:
                 onEndEvent(EndEventPtr((EndEvent *) node.get()));
                 break;
             }
+            case ProcessNodeT::signalEvent: {
+                cout << "signalEvent node" << endl;
+                return;
+            }
         }
 
         if (currentNode->outgoingSequenceList.size() == 1) {
@@ -112,17 +116,44 @@ protected:
         return retval;
     }
 
+    void catchSignal(SignalPtr event) {
+        cout << "catchSignal: " << event->getId() << endl;
+        // if currentnode != event then ignore
+        // otherwise, find next node & execute
+        if (currentNode == nullptr) {
+            return;
+        }
+        if (currentNode->matches(event->getId())) {
+            ProcessNodePtr nextNode = nullptr;
+            if (currentNode->outgoingSequenceList.size() == 1) {
+                std::list<SequenceConditionPairPtr> l = currentNode->outgoingSequenceList;
+                SequenceConditionPairPtr x = l.front();
+                nextNode = findNode(currentNode->outgoingSequenceList.front()->targetElementId);
+            } else if (currentNode->outgoingSequenceList.size() > 1) {
+                nextNode = evaluateNextNode(currentNode);
+            }
+            if (nextNode != nullptr) {
+                executeNode(nextNode);
+            }
+        }
+    }
+
 public:
     Process(const char* idarg): processName(idarg), lifecycleState(ProcessLifecycle::instantiated) {}
 
     void addProcessNode(ProcessNodePtr node) {
         processNodeMap.emplace(node->getId(), node);
+        if (node->elementType == ProcessNodeT::signalEvent) {
+            string signalName = node->getId();
+            EventCallbackContainer::Instance().addCallback(node->getId(), [this, signalName](NameValuePairPtr nvp){
+                this->catchSignal(make_shared<SignalEvent>(signalName));
+            });
+        }
     }
 
     void onStartEvent(StartEventPtr event) {
         // find node
         auto node = findNode(event->getProcessNodeType(), event->getEventName());
-
         if (node != nullptr) {
             lifecycleState = ProcessLifecycle::started;
             executeNode(node);
@@ -132,9 +163,6 @@ public:
     void onEndEvent(EndEventPtr event) {
         lifecycleState = ProcessLifecycle::stopped;
     }
-
-    void onContextChangeEvent(ContextEventPtr event);
-    void catchSignal(SignalPtr event);
 };
 
 #endif //AMVMODEL_PROCESS_H
