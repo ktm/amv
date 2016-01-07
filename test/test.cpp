@@ -7,6 +7,7 @@
 #include "ProcessTest.hxx"
 #include "ContextTest.hxx"
 #include "EventCallbackTest.h"
+#include "jstest.h"
 
 int main() {
     ContextTest contextTest;
@@ -17,4 +18,7 @@ int main() {
 
     ProcessTest sse;
     sse.testAllTheThings();
+
+    JSTest jsTest;
+    jsTest.testAllTheThings();
 }

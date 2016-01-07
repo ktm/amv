@@ -26,10 +26,6 @@ public:
     }
 };
 
-class ContextEvent: public BaseEvent {
-public:
-    ContextEvent(string name) : BaseEvent(name) {}
-};
 
 class ProcessEvent: public BaseEvent, public ProcessNode {
 public:
@@ -57,7 +53,6 @@ public:
 
 using EndEventPtr = shared_ptr<EndEvent>;
 using StartEventPtr = shared_ptr<StartEvent>;
-using ContextEventPtr = shared_ptr<ContextEvent>;
 using SignalPtr = shared_ptr<SignalEvent>;
 
 

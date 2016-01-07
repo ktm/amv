@@ -22,6 +22,7 @@ public:
 
     void testAllTheThings() {
         testSingleton();
+        testCallback();
         testSingleSetAndGet("test", "frog");
         testSingleUpdate();
         testMultipleSetAndGet();
@@ -98,5 +99,28 @@ public:
         t4.join();
         t5.join();
     }
+
+    void testCallback() {
+        cout << "ContextTest.testCallback begin..." << endl;
+        static bool callbackFired = false;
+
+        EventCallbackContainer::Instance().addCallback("test", [](NameValuePairPtr nvp){
+            callbackFired = true;
+        });
+
+        Context& c1 = Context::Instance();
+
+        c1.write("test", "frog");
+        this_thread::sleep_for(2s);
+        assert(callbackFired);
+
+        callbackFired = false;
+        c1.write("ZZZ", "frog");
+        this_thread::sleep_for(2s);
+        assert(!callbackFired);
+
+        cout << "...ContextTest.testCallback end" << endl;
+    }
+
 };
 #endif //AMVMODEL_CONTEXTTEST_H

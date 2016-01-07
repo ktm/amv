@@ -12,18 +12,9 @@
 #include <memory>
 #include <vector>
 #include <iostream>
+#include "context.hxx"
 
 using namespace std;
-
-const char* DEFAULT_SEQUENCE = "default";
-
-struct SequenceConditionPair {
-    SequenceConditionPair(string a, string b) : targetElementId(a),condition(b) {}
-    string targetElementId;
-    string condition;
-};
-
-using SequenceConditionPairPtr = shared_ptr<SequenceConditionPair>;
 
 enum class ProcessNodeT {
     serviceTask, intermediateCatchEvent, exclusiveGateway, startEvent, endEvent, signalEvent
@@ -32,24 +23,18 @@ enum class ProcessNodeT {
 class ProcessNode {
     friend class Process;
     ProcessNodeT elementType;
+    std::string outgoingSequenceId;
 
 protected:
     std::string id;
 
-    std::list<SequenceConditionPairPtr> incomingSequenceList;
-    std::list<SequenceConditionPairPtr> outgoingSequenceList;
-
 public:
-    ProcessNode(ProcessNodeT t) {
-        setProcessNodeType(t);
-    }
+    ProcessNode(ProcessNodeT t) : elementType(t) {}
 
-    ProcessNode(ProcessNodeT t, string idarg):id(idarg){
-        setProcessNodeType(t);
-    }
+    ProcessNode(ProcessNodeT t, string idarg):id(idarg), elementType(t) {}
 
-    void setProcessNodeType(ProcessNodeT arg) {
-        elementType = arg;
+    void setOutgoingNodeId(std::string seq) {
+        outgoingSequenceId = seq;
     }
 
     void setId(const char* idarg) {
@@ -67,22 +52,6 @@ public:
         return id;
     };
 
-    void addIncomingSequence(const char* id) {
-        addIncomingSequence(id, DEFAULT_SEQUENCE);
-    }
-
-    void addIncomingSequence(const char* id, const char* condition) {
-        incomingSequenceList.push_back(make_shared<SequenceConditionPair >(id, condition));
-    }
-
-    void addOutgoingSequence(const char* id, const char* condition) {
-        outgoingSequenceList.push_back(make_shared<SequenceConditionPair >(id, condition));
-    }
-
-    void addOutgoingSequence(const char* id) {
-        addOutgoingSequence(id, DEFAULT_SEQUENCE);
-    }
-
     ProcessNodeT getProcessNodeType() {
         return elementType;
     }
@@ -90,23 +59,49 @@ public:
     bool matches(string idarg) {
         return getId() == idarg;
     }
+
+    virtual std::string getNextNodeId() {
+        return outgoingSequenceId;
+    };
 };
 
 using ProcessNodePtr = shared_ptr<ProcessNode>;
 
-
 class ServiceTask: public ProcessNode {
-    std::string functionCall;
-    std::string argname;
+    std::string functionName;
+    std::vector<std::string> paramNames;
 
 public:
     ServiceTask() : ProcessNode(ProcessNodeT::serviceTask) {}
+    void execute();
 };
 
+
+using GatewayFlow = pair<std::string, std::string>;
 class ExclusiveGateway: public ProcessNode {
+    std::vector<GatewayFlow> flows;
+
 public:
-    ExclusiveGateway() : ProcessNode(ProcessNodeT::exclusiveGateway) {}
+    ExclusiveGateway(std::string name) : ProcessNode(ProcessNodeT::exclusiveGateway, name) {}
+
+    void addFlow(std::string script, std::string nodeId) {
+        flows.push_back(GatewayFlow(script, nodeId));
+    }
+
+    std::string getNextNodeId() {
+        if (flows.size() < 1) {
+            return ProcessNode::getNextNodeId();
+        }
+        for (auto iter = flows.begin() ; iter != flows.end(); ++iter) {
+           if (Context::Instance().evaluate_js_condition(iter->first)) {
+               return iter->second;
+           }
+        }
+        return nullptr;
+    };
 };
+
+using ExclusiveGatewayPtr = shared_ptr<ExclusiveGateway>;
 
 
 #endif //GPM_PROCESSMODEL_H

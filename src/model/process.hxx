@@ -27,13 +27,15 @@
 enum class ProcessLifecycle {
     instantiated, started, running, stopped
 };
-
 /** \class Process
  *  \brief The composition and execution of a single process
  *  \details TBD
  *
  */
 class Process {
+
+    //FIXME: Process listens to events by name and processes some manner of execute node
+    //       when an event comes in.
 #ifdef TEST
     friend class ProcessTest;
 #endif
@@ -54,7 +56,6 @@ protected:
         if (list == processNodeMap.end()) {
             return nullptr;
         }
-
         return list->second;
     }
 
@@ -70,54 +71,39 @@ protected:
         return list->second;
     }
 
-    void updateContext(string name, string value) {
-        Context::Instance().write(name, value);
-    }
-
     void executeNode(ProcessNodePtr node) {
-        currentNode = node;
-        ProcessNodePtr nextNode = nullptr;
+        currentNode = findNode(node->id);
+        if (nullptr == currentNode) {
+cout << "BLOW CHUNKS" << endl;
+            return;
+        }
         switch (node->getProcessNodeType()) {
             case ProcessNodeT::startEvent: {
-                // FIXME can't figure out how to dynamic_pointer_cast this:
-                StartEvent* se = (StartEvent *) node.get();
-
-                for (const NameValuePairPtr nvp : se->nvpList) {
-                    updateContext(nvp->first, nvp->second);
+                onStartEvent(StartEventPtr(std::dynamic_pointer_cast<StartEvent>(currentNode)));
+                break;
+            }
+            case ProcessNodeT::signalEvent: {
+                SignalEvent* se = (SignalEvent *) currentNode.get();
+                for (const NameValuePairPtr nvp : SignalPtr(std::dynamic_pointer_cast<SignalEvent>(currentNode))->nvpList) {
+                    Context::Instance().write(nvp->first, nvp->second);
                 }
                 break;
             }
             case ProcessNodeT::endEvent: {
-                // FIXME can't figure out how to dynamic_pointer_cast this:
-                onEndEvent(EndEventPtr((EndEvent *) node.get()));
+                onEndEvent(EndEventPtr(std::dynamic_pointer_cast<EndEvent>(currentNode)));
                 break;
             }
-            case ProcessNodeT::signalEvent: {
-                cout << "signalEvent node" << endl;
-                return;
-            }
+            default:
+                break;
         }
 
-        if (currentNode->outgoingSequenceList.size() == 1) {
-            std::list<SequenceConditionPairPtr> l = currentNode->outgoingSequenceList;
-            SequenceConditionPairPtr x = l.front();
-            nextNode = findNode(currentNode->outgoingSequenceList.front()->targetElementId);
-        } else if (currentNode->outgoingSequenceList.size() > 1) {
-            nextNode = evaluateNextNode(currentNode);
-        }
-
+        ProcessNodePtr nextNode = evaluateNextNode(currentNode);
         if (nextNode != nullptr) {
             executeNode(nextNode);
         }
     }
 
-    ProcessNodePtr evaluateNextNode(ProcessNodePtr node) {
-        ProcessNodePtr retval = nullptr;
-        return retval;
-    }
-
     void catchSignal(SignalPtr event) {
-        cout << "catchSignal: " << event->getId() << endl;
         // if currentnode != event then ignore
         // otherwise, find next node & execute
         if (currentNode == nullptr) {
@@ -125,17 +111,30 @@ protected:
         }
         if (currentNode->matches(event->getId())) {
             ProcessNodePtr nextNode = nullptr;
-            if (currentNode->outgoingSequenceList.size() == 1) {
-                std::list<SequenceConditionPairPtr> l = currentNode->outgoingSequenceList;
-                SequenceConditionPairPtr x = l.front();
-                nextNode = findNode(currentNode->outgoingSequenceList.front()->targetElementId);
-            } else if (currentNode->outgoingSequenceList.size() > 1) {
-                nextNode = evaluateNextNode(currentNode);
-            }
+            nextNode = evaluateNextNode(currentNode);
             if (nextNode != nullptr) {
                 executeNode(nextNode);
             }
         }
+    }
+
+    ProcessNodePtr evaluateNextNode(ProcessNodePtr node) {
+        ProcessNodePtr retval = nullptr;
+        if (node != nullptr) {
+            retval = findNode(node->getNextNodeId());
+        }
+        return retval;
+    }
+
+    void onStartEvent(StartEventPtr event) {
+        for (const NameValuePairPtr nvp : event->nvpList) {
+            Context::Instance().write(nvp->first, nvp->second);
+        }
+        lifecycleState = ProcessLifecycle::started;
+    }
+
+    void onEndEvent(EndEventPtr event) {
+        lifecycleState = ProcessLifecycle::stopped;
     }
 
 public:
@@ -144,24 +143,20 @@ public:
     void addProcessNode(ProcessNodePtr node) {
         processNodeMap.emplace(node->getId(), node);
         if (node->elementType == ProcessNodeT::signalEvent) {
-            string signalName = node->getId();
+            std::string signalName = node->getId();
             EventCallbackContainer::Instance().addCallback(node->getId(), [this, signalName](NameValuePairPtr nvp){
                 this->catchSignal(make_shared<SignalEvent>(signalName));
             });
         }
     }
 
-    void onStartEvent(StartEventPtr event) {
-        // find node
-        auto node = findNode(event->getProcessNodeType(), event->getEventName());
-        if (node != nullptr) {
-            lifecycleState = ProcessLifecycle::started;
-            executeNode(node);
+    void start(std::string startNodeName) {
+        ProcessNodePtr node = findNode(startNodeName);
+        if (node == nullptr) {
+            //blow chunks
+            return;
         }
-    }
-
-    void onEndEvent(EndEventPtr event) {
-        lifecycleState = ProcessLifecycle::stopped;
+        executeNode(node);
     }
 };
 

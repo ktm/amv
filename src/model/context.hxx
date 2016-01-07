@@ -6,10 +6,13 @@
 #define AMVMODEL_CONTEXT_H
 
 #include <mutex>
-#include "process_node.hxx"
 #include "../collection/name_value_pair.hxx"
 #include "../collection/threadsafe_queue.hxx"
 #include "event_callback_container.hxx"
+#include "../javascript/duktape.h"
+
+using ContextChange = pair<bool, NameValuePairPtr>;
+using ContextChangePtr = shared_ptr<ContextChange >;
 
 /*
  *
@@ -22,8 +25,17 @@ class Context {
     std::vector<NameValuePairPtr> contextData;
     std::mutex data_mutex;
 
-    Context():contextData(24) {};
-    ~Context() {};
+    duk_context *js_context;
+
+    Context():contextData(24) {
+        js_context = duk_create_heap_default();
+    };
+
+    ~Context() {
+        if (js_context != nullptr) {
+            duk_destroy_heap(js_context);
+        }
+    };
 
     NameValuePairPtr find(string name) {
         auto list = find_if(contextData.begin(), contextData.end(),
@@ -39,16 +51,22 @@ class Context {
         return *list;
     }
 
-    NameValuePairPtr _write(string name, string value) {
+    ContextChangePtr _write(string name, string value) {
         std::lock_guard<std::mutex> data_lock(data_mutex);
         NameValuePairPtr npp = find(name);
+        ContextChangePtr retval = make_shared<ContextChange>(false, npp);
+
         if (npp == nullptr) {
             npp = make_shared<NameValuePair>(name, value);
             contextData.push_back(npp);
+            retval->first = true;
         } else {
+            retval->first = (0 == value.compare(npp->second));
             npp->second = value;
         }
-        return npp;
+        retval->second = npp;
+        write_to_js(name, value);
+        return retval;
     }
 
 public:
@@ -62,9 +80,12 @@ public:
     }
 
     NameValuePairPtr write(string name, string value) {
-        NameValuePairPtr nvp = _write(name, value);
-        EventCallbackContainer::Instance().fireEvent(nvp);
-        return nvp;
+        ContextChangePtr ccp = _write(name, value);
+        if (ccp->first) {
+            // the context was changed, so publish the new value
+            EventCallbackContainer::Instance().fireEvent(name, ccp->second);
+        }
+        return ccp->second;
     }
 
     string read(string name) {
@@ -74,6 +95,25 @@ public:
             return npp->second;
         }
         return "";  // really want to return nullptr here but it breaks stuff
+    }
+
+    duk_context* jsctx() {
+        return js_context;
+    }
+
+    bool write_to_js(string name, string value) {
+        duk_bool_t rc;
+
+        duk_push_string(jsctx(), value.c_str());
+        rc = duk_put_global_string(jsctx(), name.c_str());
+        return rc;
+    }
+
+    bool evaluate_js_condition(std::string js) {
+        duk_eval_string(jsctx(), js.c_str());
+        bool retval = duk_get_boolean(jsctx(), -1);
+        duk_pop(jsctx());
+        return retval;
     }
 };
 
