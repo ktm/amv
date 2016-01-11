@@ -188,16 +188,7 @@ public:
      */
     void testServiceTask() {
         cout << "testServiceTask begin..." << endl;
-        Process* p = new Process("anonymousStartEvent");
-        EndEvent* endEvent = new EndEvent("end");
-        StartEvent* se = new StartEvent("start");
-        se->setOutgoingNodeId("end");
 
-        p->addProcessNode(StartEventPtr(se));
-        p->addProcessNode(EndEventPtr(endEvent));
-
-        StartEventPtr testEvent(new StartEvent("start"));
-        p->executeNode(testEvent);
         cout << "testServiceTask passed." << endl;
     }
 };

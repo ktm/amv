@@ -6,10 +6,13 @@
 #define AMVMODEL_CONTEXT_H
 
 #include <mutex>
+#include <stdlib.h>
+
 #include "../collection/name_value_pair.hxx"
 #include "../collection/threadsafe_queue.hxx"
 #include "event_callback_container.hxx"
-#include "../javascript/duktape.h"
+
+#include <chaiscript/chaiscript_stdlib.hpp>
 
 using ContextChange = pair<bool, NameValuePairPtr>;
 using ContextChangePtr = shared_ptr<ContextChange >;
@@ -22,19 +25,16 @@ using ContextChangePtr = shared_ptr<ContextChange >;
  *
  */
 class Context {
+#ifdef TEST
+    friend class JSTest;
+    friend class ProcessTest;
+#endif
+
     std::vector<NameValuePairPtr> contextData;
     std::mutex data_mutex;
+    chaiscript::ChaiScript js_context;
 
-    duk_context *js_context;
-
-    Context():contextData(24) {
-        js_context = duk_create_heap_default();
-    };
-
-    ~Context() {
-        if (js_context != nullptr) {
-            duk_destroy_heap(js_context);
-        }
+    Context():contextData(24),js_context(chaiscript::Std_Lib::library()) {
     };
 
     NameValuePairPtr find(string name) {
@@ -53,20 +53,34 @@ class Context {
 
     ContextChangePtr _write(string name, string value) {
         std::lock_guard<std::mutex> data_lock(data_mutex);
+
         NameValuePairPtr npp = find(name);
         ContextChangePtr retval = make_shared<ContextChange>(false, npp);
 
         if (npp == nullptr) {
             npp = make_shared<NameValuePair>(name, value);
+            write_to_js(name, value);
             contextData.push_back(npp);
             retval->first = true;
         } else {
-            retval->first = (0 == value.compare(npp->second));
+            retval->first = (0 != value.compare(npp->second));
             npp->second = value;
+            if (retval->first) {
+                write_to_js(name, value);
+            }
         }
         retval->second = npp;
-        write_to_js(name, value);
+
         return retval;
+    }
+
+    void write_to_js(string name, string value) {
+        chaiscript::Boxed_Value v(value);
+        double d = toNumber(value);
+        if (HUGE_VAL != d) {
+            v = chaiscript::Boxed_Value(d);
+        }
+        js_context.set_global(v, name);
     }
 
 public:
@@ -97,22 +111,24 @@ public:
         return "";  // really want to return nullptr here but it breaks stuff
     }
 
-    duk_context* jsctx() {
-        return js_context;
-    }
+    double toNumber(std::string arg) {
+        double retval = HUGE_VAL;
 
-    bool write_to_js(string name, string value) {
-        duk_bool_t rc;
+        char * endptr;
+        double d = strtod(arg.c_str(), &endptr);
+        if (arg.c_str() != endptr) {
+            retval = d;
+        }
 
-        duk_push_string(jsctx(), value.c_str());
-        rc = duk_put_global_string(jsctx(), name.c_str());
-        return rc;
+        return retval;
     }
 
     bool evaluate_js_condition(std::string js) {
-        duk_eval_string(jsctx(), js.c_str());
-        bool retval = duk_get_boolean(jsctx(), -1);
-        duk_pop(jsctx());
+        cout << "evaluate_js_condition: " << js;
+        std::lock_guard<std::mutex> data_lock(data_mutex);
+        bool retval = js_context.eval<bool>(js);
+        cout << ": " << retval << endl;
+
         return retval;
     }
 };

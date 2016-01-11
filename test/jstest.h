@@ -5,10 +5,14 @@
 #ifndef AMVMODEL_JAVASCRIPT_H
 #define AMVMODEL_JAVASCRIPT_H
 
-#include "../src/javascript/duktape.h"
+#include <chaiscript/chaiscript.hpp>
+
+std::string fxn() {
+    return "Hello World!";
+}
+
 
 class JSTest {
-
 public:
     JSTest() { }
 
@@ -20,8 +24,12 @@ public:
     }
 
     void testConfig() {
-        duk_context *ctx = Context::Instance().jsctx();
-        duk_eval_string(ctx, "print('Hello world!');");
+        cout << "testConfind begin..." << endl;
+        Context::Instance().js_context.add(chaiscript::fun(&fxn), "fxn");
+
+        std::string d = Context::Instance().js_context.eval<std::string>("fxn();");
+        cout << d << endl;
+        cout << "testConfind end..." << endl;
     }
 
     void testContext() {
@@ -38,13 +46,11 @@ public:
         string xval = c1.read("nvp1");
         assert(xval.compare("testVal") == 0);
 
-        duk_context *ctx = Context::Instance().jsctx();
+        bool jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"testVal\"");
+        assert(jscontext);
 
-        duk_eval_string(ctx, "test_val = nvp1;");
-        duk_get_global_string(ctx, "test_val");
-        const char* test_val = duk_get_string(ctx, 1);
-        string c("testVal");
-        assert(c.compare(test_val) == 0);
+        jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"XXtestVal\"");
+        assert(!jscontext);
 
         cout << "testContext passed" << endl;
     }
