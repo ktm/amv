@@ -12,7 +12,6 @@
 #include "../collection/threadsafe_queue.hxx"
 #include "event_callback_container.hxx"
 
-#include <chaiscript/chaiscript_stdlib.hpp>
 
 using ContextChange = pair<bool, NameValuePairPtr>;
 using ContextChangePtr = shared_ptr<ContextChange >;
@@ -24,7 +23,7 @@ using ContextChangePtr = shared_ptr<ContextChange >;
  * http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html
  *
  */
-class Context {
+class AMVContext {
 #ifdef TEST
     friend class JSTest;
     friend class ProcessTest;
@@ -32,9 +31,9 @@ class Context {
 
     std::vector<NameValuePairPtr> contextData;
     std::mutex data_mutex;
-    chaiscript::ChaiScript js_context;
+//    chaiscript::ChaiScript js_context;
 
-    Context():contextData(24),js_context(chaiscript::Std_Lib::library()) {
+    AMVContext(): contextData(24) {
     };
 
     NameValuePairPtr find(string name) {
@@ -75,17 +74,12 @@ class Context {
     }
 
     void write_to_js(string name, string value) {
-        chaiscript::Boxed_Value v(value);
-        double d = toNumber(value);
-        if (HUGE_VAL != d) {
-            v = chaiscript::Boxed_Value(d);
-        }
-        js_context.set_global(v, name);
+
     }
 
 public:
-    static Context& Instance() {
-        static Context CTX;
+    static AMVContext & Instance() {
+        static AMVContext CTX;
         return CTX;
     }
 
@@ -126,7 +120,7 @@ public:
     bool evaluate_js_condition(std::string js) {
         cout << "evaluate_js_condition: " << js;
         std::lock_guard<std::mutex> data_lock(data_mutex);
-        bool retval = js_context.eval<bool>(js);
+        bool retval = true;
         cout << ": " << retval << endl;
 
         return retval;

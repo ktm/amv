@@ -29,8 +29,8 @@ public:
     }
 
     void testSingleton() {
-        Context& c1 = Context::Instance();
-        Context& c2 = Context::Instance();
+        AMVContext & c1 = AMVContext::Instance();
+        AMVContext & c2 = AMVContext::Instance();
 
         assert(&c2 == &c1);
         cout << "testSingleton passed" << endl;
@@ -38,7 +38,7 @@ public:
 
     static void testSingleUpdate() {
 
-        Context& c1 = Context::Instance();
+        AMVContext & c1 = AMVContext::Instance();
         c1.write("test", "frog");
         string xval = c1.read("test");
         assert(xval.compare("frog") == 0);
@@ -51,7 +51,7 @@ public:
     }
 
     static void testSingleSetAndGet(string name, string val) {
-        Context& c1 = Context::Instance();
+        AMVContext & c1 = AMVContext::Instance();
         c1.write(name, val);
         string xval = c1.read(name);
         assert(xval.compare(val) == 0);
@@ -64,18 +64,18 @@ public:
         cout << "sleeping..." << endl;
         std::this_thread::sleep_until(time_point);
         cout << "... done sleeping" << endl;
-        Context::Instance().write("Bxyz", "xxx");
-        Context::Instance().write("Axyz", "pdq");
-        Context::Instance().read("Bxyz");
-        Context::Instance().read("Cx");
+        AMVContext::Instance().write("Bxyz", "xxx");
+        AMVContext::Instance().write("Axyz", "pdq");
+        AMVContext::Instance().read("Bxyz");
+        AMVContext::Instance().read("Cx");
         cout << "... done with thread" << endl;
     }
 
     static void punk_thread() {
         cout << "punking..." << endl;
         for (int i=0; i<3000000; i++) {
-            Context::Instance().write("Bxyz", "123");
-            Context::Instance().write("Axyz", "555");
+            AMVContext::Instance().write("Bxyz", "123");
+            AMVContext::Instance().write("Axyz", "555");
         }
         cout << "... done punking" << endl;
     }
@@ -108,7 +108,7 @@ public:
             callbackFired = true;
         });
 
-        Context& c1 = Context::Instance();
+        AMVContext & c1 = AMVContext::Instance();
 
         c1.write("test", "frog");
         this_thread::sleep_for(2s);

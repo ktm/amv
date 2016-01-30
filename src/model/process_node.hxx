@@ -72,8 +72,12 @@ class ServiceTask: public ProcessNode {
     std::vector<std::string> paramNames;
 
 public:
-    ServiceTask() : ProcessNode(ProcessNodeT::serviceTask) {}
+    ServiceTask(std::string name) : ProcessNode(ProcessNodeT::serviceTask, name) {}
     void execute();
+    void setFunctionName(std::string arg) { functionName = arg;}
+    void addParamName(std::string arg) {
+       paramNames.push_back(arg);
+    }
 };
 
 
@@ -93,7 +97,7 @@ public:
             return ProcessNode::getNextNodeId();
         }
         for (auto iter = flows.begin() ; iter != flows.end(); ++iter) {
-           if (Context::Instance().evaluate_js_condition(iter->first)) {
+           if (AMVContext::Instance().evaluate_js_condition(iter->first)) {
                return iter->second;
            }
         }
@@ -102,6 +106,5 @@ public:
 };
 
 using ExclusiveGatewayPtr = shared_ptr<ExclusiveGateway>;
-
 
 #endif //GPM_PROCESSMODEL_H
