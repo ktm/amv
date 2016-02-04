@@ -39,7 +39,7 @@ public:
 
         assert(p->currentNode->getId().compare("start") == 0);
 
-        AMVContext & c1 = AMVContext::Instance();
+        Context& c1 = Context::Instance();
         string xval = c1.read("nvp1");
         assert(xval.compare("testVal") == 0);
 
@@ -188,18 +188,6 @@ public:
      */
     void testServiceTask() {
         cout << "testServiceTask begin..." << endl;
-        Process* p = new Process("anonymousStartEvent");
-        EndEvent* endEvent = new EndEvent("end");
-        StartEvent* se = new StartEvent("start");
-        ServiceTask* st = new ServiceTask("setServo");
-        st->setOutgoingNodeId("end");
-        se->setOutgoingNodeId("setServo");
-
-        p->addProcessNode(StartEventPtr(se));
-        p->addProcessNode(EndEventPtr(endEvent));
-
-        StartEventPtr testEvent(new StartEvent("start"));
-        p->executeNode(testEvent);
 
         cout << "testServiceTask passed." << endl;
     }

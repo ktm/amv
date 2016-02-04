@@ -85,7 +85,7 @@ cout << "BLOW CHUNKS" << endl;
             case ProcessNodeT::signalEvent: {
                 SignalEvent* se = (SignalEvent *) currentNode.get();
                 for (const NameValuePairPtr nvp : SignalPtr(std::dynamic_pointer_cast<SignalEvent>(currentNode))->nvpList) {
-                    AMVContext::Instance().write(nvp->first, nvp->second);
+                    Context::Instance().write(nvp->first, nvp->second);
                 }
                 break;
             }
@@ -128,7 +128,7 @@ cout << "BLOW CHUNKS" << endl;
 
     void onStartEvent(StartEventPtr event) {
         for (const NameValuePairPtr nvp : event->nvpList) {
-            AMVContext::Instance().write(nvp->first, nvp->second);
+            Context::Instance().write(nvp->first, nvp->second);
         }
         lifecycleState = ProcessLifecycle::started;
     }
