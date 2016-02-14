@@ -27,7 +27,9 @@ public:
         cout << "testConfind begin..." << endl;
 
         Context::Instance().write("gpsPort", "/dev/ttyUSB0");
-        gpsFD = chaiscript_gateway::Instance().call<int>("serialInit", "gpsPort");
+
+        std::vector<std::string> args = {"gpsPort"};
+        gpsFD = chaiscript_gateway::Instance().call<int>("serialInit", args);
 
         assert(gpsFD > 0);
 

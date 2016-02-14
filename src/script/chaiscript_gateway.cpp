@@ -42,11 +42,17 @@ void chaiscript_gateway::write_to_js(std::string name, std::string value) {
     js_context.set_global(v, name);
 }
 
-std::string chaiscript_gateway::createCallString(std::string fxnname, std::string argname) {
-    const std::string argVal = Context::Instance().read(argname);
+std::string chaiscript_gateway::createCallString(std::string fxnname, std::vector<std::string> args) {
     std::string callString(fxnname);
     callString.append("(\"");
-    callString.append(argVal);
+    bool firstArg = true;
+    for (std::string argname : args) {
+        callString.append(Context::Instance().read(argname));
+        if (!firstArg) {
+            callString.append(",");
+        }
+        firstArg = false;
+    }
     callString.append("\");");
     std::cout << callString << std::endl;
     return callString;

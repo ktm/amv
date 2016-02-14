@@ -22,11 +22,11 @@ public:
 
     bool evaluate_condition(std::string condition);
     void write_to_js(std::string name, std::string value);
-    std::string createCallString(std::string fxnname, std::string argname);
+    std::string createCallString(std::string fxnname, std::vector<std::string> args);
 
     //TIL template fxn defs go in the header, otherwise the linker fails
-    template<typename Value> Value call(std::string fxnname, std::string argname) {
-        const std::string callString = createCallString(fxnname, argname);
+    template<typename Value> Value call(std::string fxnname, std::vector<std::string> args) {
+        const std::string callString = createCallString(fxnname, args);
         chaiscript::Boxed_Value bv = chaiscript_gateway::Instance().js_context(callString);
         Value ret = chaiscript::boxed_cast<Value>(bv);
         return ret;
