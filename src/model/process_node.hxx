@@ -93,7 +93,7 @@ public:
             return ProcessNode::getNextNodeId();
         }
         for (auto iter = flows.begin() ; iter != flows.end(); ++iter) {
-           if (Context::Instance().evaluate_js_condition(iter->first)) {
+           if (chaiscript_gateway::Instance().evaluate_condition(iter->first)) {
                return iter->second;
            }
         }

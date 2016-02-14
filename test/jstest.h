@@ -5,30 +5,32 @@
 #ifndef AMVMODEL_JAVASCRIPT_H
 #define AMVMODEL_JAVASCRIPT_H
 
-#include <chaiscript/chaiscript.hpp>
+#include "../src/serial/serial.h"
 
 std::string fxn() {
     return "Hello World!";
 }
 
-
 class JSTest {
+    int gpsFD;
 public:
     JSTest() { }
 
     void testAllTheThings() {
         cout << "JSTest testAllTheThings begin..." << endl;
         testConfig();
-        testContext();
+//        testContext();
         cout << "JSTest testAllTheThings end..." << endl;
     }
 
     void testConfig() {
         cout << "testConfind begin..." << endl;
-        Context::Instance().js_context.add(chaiscript::fun(&fxn), "fxn");
 
-        std::string d = Context::Instance().js_context.eval<std::string>("fxn();");
-        cout << d << endl;
+        Context::Instance().write("gpsPort", "/dev/ttyUSB0");
+        gpsFD = chaiscript_gateway::Instance().call<int>("serialInit", "gpsPort");
+
+        assert(gpsFD > 0);
+
         cout << "testConfind end..." << endl;
     }
 
@@ -46,11 +48,11 @@ public:
         string xval = c1.read("nvp1");
         assert(xval.compare("testVal") == 0);
 
-        bool jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"testVal\"");
-        assert(jscontext);
+//        bool jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"testVal\"");
+//        assert(jscontext);
 
-        jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"XXtestVal\"");
-        assert(!jscontext);
+//        jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"XXtestVal\"");
+//        assert(!jscontext);
 
         cout << "testContext passed" << endl;
     }

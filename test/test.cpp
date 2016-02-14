@@ -12,7 +12,7 @@
 int main() {
     JSTest jsTest;
     jsTest.testAllTheThings();
-
+/*
     ContextTest contextTest;
     contextTest.testAllTheThings();
 
@@ -21,4 +21,5 @@ int main() {
 
     ProcessTest sse;
     sse.testAllTheThings();
+*/
 }
