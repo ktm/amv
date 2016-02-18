@@ -39,9 +39,12 @@ public:
         Context::Instance().write("line", "testLine");
         Context::Instance().write("lineLength", 8);
         args = {"gpsFD", "line", "lineLength"};
-        gpsFD = chaiscript_gateway::Instance().call<int>("serialWrite", args);
+//        gpsFD = chaiscript_gateway::Instance().call<int>("serialWrite", args);
 
-        cout << "testConfind end..." << endl;
+        Context::Instance().write("lineLength", 256);
+        int readbytes = chaiscript_gateway::Instance().call<int>("serialRead", args);
+        std::cout << "readBytes: " << readbytes << " buf: " << Context::Instance().read("line") << std::endl;
+        std::cout << "testConfind end..." << endl;
     }
 
     void testContext() {

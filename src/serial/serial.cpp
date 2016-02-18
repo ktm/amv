@@ -55,12 +55,9 @@ int serial_println(int fs_handle, std::string line, int len)
 // Return a 0 len string in case of problems with UART
 int serial_readln(int fs_handle, std::string buffer, int len)
 {
-    printf("serial_readln XXXXX\n");
-    return len;
-
-    /*
     char c;
-    char *b = buffer;
+    char *b = (char *)malloc((len+1) * sizeof(char));
+
     int rx_length = -1;
     while(1) {
         rx_length = read(fs_handle, (void*)(&c), 1);
@@ -76,13 +73,13 @@ int serial_readln(int fs_handle, std::string buffer, int len)
             *b++ = c;
         }
     }
-     */
+    buffer.assign(b, rx_length+1);
+    return rx_length;
 }
 
 int serial_close(int fs_handle)
 {
-    printf("serial_close XXXXX\n");
+    close(fs_handle);
     return fs_handle;
-//    close(fs_handle);
 }
 
