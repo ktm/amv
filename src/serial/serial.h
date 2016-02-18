@@ -4,11 +4,11 @@
 #include <string>
 int serial_init(std::string);
 
-void serial_config(int);
+int serial_config(int);
 
-void serial_println(int, std::string, int);
+int serial_println(int, std::string, int);
 
-void serial_readln(int, std::string, int);
+int serial_readln(int, std::string, int);
 
-void serial_close(int);
+int serial_close(int);
 #endif

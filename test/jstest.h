@@ -30,8 +30,16 @@ public:
 
         std::vector<std::string> args = {"gpsPort"};
         gpsFD = chaiscript_gateway::Instance().call<int>("serialInit", args);
-
         assert(gpsFD > 0);
+
+        args = {"gpsFD"};
+        Context::Instance().write("gpsFD", gpsFD);
+        gpsFD = chaiscript_gateway::Instance().call<int>("serialConfig", args);
+
+        Context::Instance().write("line", "testLine");
+        Context::Instance().write("lineLength", 8);
+        args = {"gpsFD", "line", "lineLength"};
+        gpsFD = chaiscript_gateway::Instance().call<int>("serialWrite", args);
 
         cout << "testConfind end..." << endl;
     }

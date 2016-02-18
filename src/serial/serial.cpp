@@ -5,6 +5,7 @@
 #include <termios.h>
 #include <string.h>
 #include <string>
+#include <iostream>
 
 #include "serial.h"
 
@@ -18,7 +19,7 @@ int serial_init(std::string port_name)
     return fs_handle;
 }
 
-void serial_config(int fs_handle)
+int serial_config(int fs_handle)
 {
     struct termios options;
     tcgetattr(fs_handle, &options);
@@ -28,32 +29,35 @@ void serial_config(int fs_handle)
     options.c_lflag = 0;
     tcflush(fs_handle, TCIFLUSH);
     tcsetattr(fs_handle, TCSANOW, &options);
+    return fs_handle;
 }
 
-void serial_println(int fs_handle, std::string line, int len)
+int serial_println(int fs_handle, std::string line, int len)
 {
-    printf("serial_println XXXXX\n");
-    /*
+    int count = 0;
     if (fs_handle != -1) {
         char *cpstr = (char *)malloc((len+1) * sizeof(char));
-        strcpy(cpstr, line);
+        strcpy(cpstr, line.c_str());
         cpstr[len-1] = '\r';
         cpstr[len] = '\n';
 
-        int count = write(fs_handle, cpstr, len+1);
+        count = write(fs_handle, cpstr, len+1);
         if (count < 0) {
-            //TODO: handle errors...
+            std::cout << "serial_println fail: " << count  << std::endl;
         }
         free(cpstr);
     }
-     */
+
+    return count;
 }
 
 // Read a line from UART.
 // Return a 0 len string in case of problems with UART
-void serial_readln(int fs_handle, std::string buffer, int len)
+int serial_readln(int fs_handle, std::string buffer, int len)
 {
     printf("serial_readln XXXXX\n");
+    return len;
+
     /*
     char c;
     char *b = buffer;
@@ -75,9 +79,10 @@ void serial_readln(int fs_handle, std::string buffer, int len)
      */
 }
 
-void serial_close(int fs_handle)
+int serial_close(int fs_handle)
 {
     printf("serial_close XXXXX\n");
+    return fs_handle;
 //    close(fs_handle);
 }
 

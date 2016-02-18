@@ -11,8 +11,8 @@
 chaiscript_gateway::chaiscript_gateway(): js_context(chaiscript::Std_Lib::library()) {
     js_context.add(chaiscript::fun(&serial_init),    "serialInit");
     js_context.add(chaiscript::fun(&serial_config),  "serialConfig");
-    js_context.add(chaiscript::fun(&serial_println), "serialPrintln");
-    js_context.add(chaiscript::fun(&serial_readln),  "serialReadln");
+    js_context.add(chaiscript::fun(&serial_println), "serialWrite");
+    js_context.add(chaiscript::fun(&serial_readln),  "serialRead");
     js_context.add(chaiscript::fun(&serial_close),  "serialClose");
 }
 
@@ -44,16 +44,24 @@ void chaiscript_gateway::write_to_js(std::string name, std::string value) {
 
 std::string chaiscript_gateway::createCallString(std::string fxnname, std::vector<std::string> args) {
     std::string callString(fxnname);
-    callString.append("(\"");
-    bool firstArg = true;
-    for (std::string argname : args) {
-        callString.append(Context::Instance().read(argname));
-        if (!firstArg) {
+    callString.append("(");
+
+    int n = args.size();
+    for (int idx = 0; idx < n; ++idx) {
+        std::string value = (Context::Instance().read(args[idx]));
+        double d = toNumber(value);
+        if (HUGE_VAL != d) {
+            callString.append(value);
+        } else {
+            callString.append("\"");
+            callString.append(value);
+            callString.append("\"");
+        }
+        if (idx < n-1) {
             callString.append(",");
         }
-        firstArg = false;
     }
-    callString.append("\");");
+    callString.append(");");
     std::cout << callString << std::endl;
     return callString;
 }
