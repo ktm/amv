@@ -58,22 +58,25 @@ int serial_readln(int fs_handle, std::string buffer, int len)
     char c;
     char *b = (char *)malloc((len+1) * sizeof(char));
 
-    int rx_length = -1;
-    while(1) {
-        rx_length = read(fs_handle, (void*)(&c), 1);
+    int rx_length = 0;
+    while(rx_length < len) {
+        int nread = read(fs_handle, (void*)(&c), 1);
 
-        if (rx_length <= 0) {
-            //wait for messages
-            sleep(1);
+        if (nread <= 0) {
+            break;
         } else {
             if (c == '\n') {
                 *b++ = '\0';
                 break;
             }
             *b++ = c;
+            rx_length += nread;
         }
     }
-    buffer.assign(b, rx_length+1);
+    if (rx_length > 0) {
+        buffer.assign(b, rx_length);
+    }
+    free(b);
     return rx_length;
 }
 

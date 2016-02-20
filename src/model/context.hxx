@@ -52,6 +52,10 @@ class Context {
         return _write(name, to_string(value));
     }
 
+    ContextChangePtr _write(string name, double value) {
+        return _write(name, to_string(value));
+    }
+
     ContextChangePtr _write(string name, string value) {
         std::lock_guard<std::mutex> data_lock(data_mutex);
 
@@ -82,6 +86,15 @@ public:
     }
 
     NameValuePairPtr write(string name, int value) {
+        ContextChangePtr ccp = _write(name, value);
+        if (ccp->first) {
+            // the context was changed, so publish the new value
+            EventCallbackContainer::Instance().fireEvent(name, ccp->second);
+        }
+        return ccp->second;
+    }
+
+    NameValuePairPtr write(string name, double value) {
         ContextChangePtr ccp = _write(name, value);
         if (ccp->first) {
             // the context was changed, so publish the new value

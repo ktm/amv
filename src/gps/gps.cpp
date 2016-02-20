@@ -5,55 +5,49 @@
 #include <math.h>
 
 #include "nmea.h"
-#include "serial.h"
-
-void gps_init(void) {
-    serial_init();
-    serial_config();
-
-    //Write commands
-}
-
-void gps_on(void) {
-    //Write on
-}
+#include "../serial/serial.h"
+#include "../model/context.hxx"
 
 // Compute the GPS location using decimal scale
-void gps_location(loc_t *coord) {
+int update_gps_location(int fd) {
+    loc_t coord;
     uint8_t status = _EMPTY;
     while(status != _COMPLETED) {
         gpgga_t gpgga;
         gprmc_t gprmc;
         char buffer[256];
 
-        serial_readln(buffer, 256);
+        if (serial_readln(fd, buffer, 256) < 10) {
+            return -1;
+        }
+
         switch (nmea_get_message_type(buffer)) {
             case NMEA_GPGGA:
                 nmea_parse_gpgga(buffer, &gpgga);
 
                 gps_convert_deg_to_dec(&(gpgga.latitude), gpgga.lat, &(gpgga.longitude), gpgga.lon);
 
-                coord->latitude = gpgga.latitude;
-                coord->longitude = gpgga.longitude;
-                coord->altitude = gpgga.altitude;
-
+                coord.latitude = gpgga.latitude;
+                coord.longitude = gpgga.longitude;
+                coord.altitude = gpgga.altitude;
+                Context::Instance().write("gps.latitude", coord.latitude);
+                Context::Instance().write("gps.longitude", coord.longitude);
+                Context::Instance().write("gps.altitude", coord.altitude);
                 status |= NMEA_GPGGA;
                 break;
             case NMEA_GPRMC:
                 nmea_parse_gprmc(buffer, &gprmc);
 
-                coord->speed = gprmc.speed;
-                coord->course = gprmc.course;
+                coord.speed = gprmc.speed;
+                coord.course = gprmc.course;
 
+                Context::Instance().write("gps.speed", coord.speed);
+                Context::Instance().write("gps.course", coord.course);
                 status |= NMEA_GPRMC;
                 break;
         }
     }
-}
-
-void gps_off(void) {
-    //Write off
-    serial_close();
+    return 1;
 }
 
 // Convert lat e lon to decimals (from deg)
@@ -79,4 +73,3 @@ double gps_deg_dec(double deg_point)
 
     return round(absdlat + (absmlat/60) + (absslat/3600)) /1000000;
 }
-

@@ -18,13 +18,13 @@ public:
 
     void testAllTheThings() {
         cout << "JSTest testAllTheThings begin..." << endl;
-        testConfig();
-//        testContext();
+        testSerial();
+        testGPS();
         cout << "JSTest testAllTheThings end..." << endl;
     }
 
-    void testConfig() {
-        cout << "testConfind begin..." << endl;
+    void testSerial() {
+        cout << "testSerial begin..." << endl;
 
         Context::Instance().write("gpsPort", "/dev/ttyUSB0");
 
@@ -39,35 +39,31 @@ public:
         Context::Instance().write("line", "testLine");
         Context::Instance().write("lineLength", 8);
         args = {"gpsFD", "line", "lineLength"};
-//        gpsFD = chaiscript_gateway::Instance().call<int>("serialWrite", args);
-
-        Context::Instance().write("lineLength", 256);
         int readbytes = chaiscript_gateway::Instance().call<int>("serialRead", args);
         std::cout << "readBytes: " << readbytes << " buf: " << Context::Instance().read("line") << std::endl;
-        std::cout << "testConfind end..." << endl;
+
+        args = {"gpsFD"};
+        chaiscript_gateway::Instance().call<int>("serialClose", args);
+
+        std::cout << "testSerial end..." << endl;
     }
 
-    void testContext() {
-        cout << "testContext begin..." << endl;
+    void testGPS() {
+        cout << "testGPS begin..." << endl;
 
-        Process* p = new Process("anonymousStartEvent");
-        StartEvent* se = new StartEvent("start");
-        se->addNVP("nvp1", "testVal");
-        p->addProcessNode(StartEventPtr(se));
+        Context::Instance().write("gpsPort", "/dev/ttyUSB0");
 
-        p->start("start");
+        std::vector<std::string> args = {"gpsPort"};
+        gpsFD = chaiscript_gateway::Instance().call<int>("serialInit", args);
+        assert(gpsFD > 0);
 
-        Context& c1 = Context::Instance();
-        string xval = c1.read("nvp1");
-        assert(xval.compare("testVal") == 0);
+        args = {"gpsFD"};
+        Context::Instance().write("gpsFD", gpsFD);
+        gpsFD = chaiscript_gateway::Instance().call<int>("serialConfig", args);
 
-//        bool jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"testVal\"");
-//        assert(jscontext);
+        chaiscript_gateway::Instance().call<int>("updateGPS", args);
 
-//        jscontext = Context::Instance().js_context.eval<bool>("nvp1 == \"XXtestVal\"");
-//        assert(!jscontext);
-
-        cout << "testContext passed" << endl;
+        cout << "testGPS passed" << endl;
     }
 
 };

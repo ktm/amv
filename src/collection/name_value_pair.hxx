@@ -3,13 +3,14 @@
 //
 #include <memory>
 #include <string>
-
-using namespace std;
+#include <boost/variant.hpp>
 
 #ifndef AMVMODEL_NAME_VALUE_PAIR_HXX_H
 #define AMVMODEL_NAME_VALUE_PAIR_HXX_H
-using NameValuePair = pair<string, string>;
-using NameValuePairPtr = shared_ptr<NameValuePair>;
+
+using Value = boost::variant<boost::blank, std::string, int, double>;
+using NameValuePair = std::pair<std::string, std::string>;
+using NameValuePairPtr = std::shared_ptr<NameValuePair>;
 
 
 #endif //AMVMODEL_NAME_VALUE_PAIR_HXX_H

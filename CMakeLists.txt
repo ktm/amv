@@ -1,5 +1,5 @@
 set(CMAKE_CXX_COMPILER "/usr/local/bin/clang++")
-set(CMAKE_C_COMPILER "/usr/local/bin/clang++")
+set(CMAKE_C_COMPILER "/usr/local/bin/clang")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread -ldl -DCHAISCRIPT_NO_THREADS")
 
 cmake_minimum_required(VERSION 3.3)
@@ -20,6 +20,10 @@ set(SOURCE_FILES test/test.cpp
         src/script/chaiscript_gateway.h
         src/script/chaiscript_gateway.cpp
         src/serial/serial.h
-        src/serial/serial.cpp)
+        src/serial/serial.cpp
+        src/gps/gps.h
+        src/gps/gps.cpp
+        src/gps/nmea.h
+        src/gps/nmea.cpp)
 
 add_executable(amvmodel ${SOURCE_FILES})

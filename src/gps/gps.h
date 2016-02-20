@@ -10,16 +10,10 @@ struct location {
 };
 typedef struct location loc_t;
 
-// Initialize device
-void gps_init(void);
-// Activate device
-void gps_on(void);
+
 // Get the actual location
-void gps_location(loc_t *);
+int update_gps_location(int fd);
 
-
-// Turn off device (low-power consumption)
-void gps_off(void);
 
 // -------------------------------------------------------------------------
 // Internal functions
