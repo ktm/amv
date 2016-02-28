@@ -53,10 +53,11 @@ int serial_println(int fs_handle, std::string line, int len)
 
 // Read a line from UART.
 // Return a 0 len string in case of problems with UART
-int serial_readln(int fs_handle, std::string buffer, int len)
+int serial_readln(int fs_handle, std::string& buffer, int len)
 {
     char c;
-    char *b = (char *)malloc((len+1) * sizeof(char));
+    char *readbuf = (char *)malloc((len+1) * sizeof(char));
+    char* b = readbuf;
 
     int rx_length = 0;
     while(rx_length < len) {
@@ -65,7 +66,7 @@ int serial_readln(int fs_handle, std::string buffer, int len)
         if (nread <= 0) {
             break;
         } else {
-            if (c == '\n') {
+            if ((c== '\r') || (c == '\n')) {
                 *b++ = '\0';
                 break;
             }
@@ -74,9 +75,11 @@ int serial_readln(int fs_handle, std::string buffer, int len)
         }
     }
     if (rx_length > 0) {
-        buffer.assign(b, rx_length);
+        buffer = readbuf;
     }
-    free(b);
+
+    free(readbuf);
+
     return rx_length;
 }
 

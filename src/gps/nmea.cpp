@@ -6,9 +6,12 @@
 
 #include "nmea.h"
 
-void nmea_parse_gpgga(char *nmea, gpgga_t *loc)
+std::string NMEA_GPGGA_STR = "$GPGGA";
+std::string NMEA_GPRMC_STR = "$GPRMC";
+
+void nmea_parse_gpgga(std::string nmea, gpgga_t *loc)
 {
-    char *p = nmea;
+    const char *p = nmea.c_str();
 
     p = strchr(p, ',')+1; //skip time
 
@@ -56,9 +59,9 @@ void nmea_parse_gpgga(char *nmea, gpgga_t *loc)
     loc->altitude = atof(p);
 }
 
-void nmea_parse_gprmc(char *nmea, gprmc_t *loc)
+void nmea_parse_gprmc(std::string nmea, gprmc_t *loc)
 {
-    char *p = nmea;
+    const char *p = nmea.c_str();
 
     p = strchr(p, ',')+1; //skip time
     p = strchr(p, ',')+1; //skip status
@@ -110,25 +113,26 @@ void nmea_parse_gprmc(char *nmea, gprmc_t *loc)
  * @param message The NMEA message
  * @return The type of message if it is valid
  */
-uint8_t nmea_get_message_type(const char *message)
+uint8_t nmea_get_message_type(std::string message)
 {
     uint8_t checksum = 0;
     if ((checksum = nmea_valid_checksum(message)) != _EMPTY) {
         return checksum;
     }
 
-    if (strstr(message, NMEA_GPGGA_STR) != NULL) {
+    if (message.find(NMEA_GPGGA_STR) != std::string::npos) {
         return NMEA_GPGGA;
     }
 
-    if (strstr(message, NMEA_GPRMC_STR) != NULL) {
+    if (message.find(NMEA_GPRMC_STR) != std::string::npos ) {
         return NMEA_GPRMC;
     }
 
     return NMEA_UNKNOWN;
 }
 
-uint8_t nmea_valid_checksum(const char *message) {
+uint8_t nmea_valid_checksum(std::string arg) {
+    const char *message = arg.c_str();
     uint8_t checksum= (uint8_t)strtol(strchr(message, '*')+1, NULL, 16);
 
     char p;

@@ -17,7 +17,7 @@ public:
     BaseEvent(string name): eventName(name) {
     }
 
-    void addNVP(std::string name, std::string value) {
+    void addNVP(std::string name, Value value) {
         nvpList.push_back(make_shared<NameValuePair>(name, value));
     }
 

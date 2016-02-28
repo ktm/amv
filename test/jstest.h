@@ -6,6 +6,7 @@
 #define AMVMODEL_JAVASCRIPT_H
 
 #include "../src/serial/serial.h"
+#include "../src/gps/gps.h"
 
 std::string fxn() {
     return "Hello World!";
@@ -18,8 +19,9 @@ public:
 
     void testAllTheThings() {
         cout << "JSTest testAllTheThings begin..." << endl;
-        testSerial();
+//        testSerial();
         testGPS();
+
         cout << "JSTest testAllTheThings end..." << endl;
     }
 
@@ -61,7 +63,12 @@ public:
         Context::Instance().write("gpsFD", gpsFD);
         gpsFD = chaiscript_gateway::Instance().call<int>("serialConfig", args);
 
+        sleep(5);
         chaiscript_gateway::Instance().call<int>("updateGPS", args);
+
+        std::cout << "latitude: " << boost::get<double>(Context::Instance().read("gps.latitude")) << std::endl;
+        std::cout << "longitude: " << boost::get<double>(Context::Instance().read("gps.longitude")) << std::endl;
+        std::cout << "altitude: " << boost::get<double>(Context::Instance().read("gps.altitude")) << " meters" << std::endl;
 
         cout << "testGPS passed" << endl;
     }

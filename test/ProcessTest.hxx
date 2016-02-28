@@ -40,8 +40,9 @@ public:
         assert(p->currentNode->getId().compare("start") == 0);
 
         Context& c1 = Context::Instance();
-        string xval = c1.read("nvp1");
-        assert(xval.compare("testVal") == 0);
+        Value lval = c1.read("nvp1");
+        Value rval = Value("testVal");
+        assert(value_compare(lval, rval));
 
         cout << "testContext passed" << endl;
     }
@@ -101,7 +102,7 @@ public:
         EndEvent* endEventC = new EndEvent("endC");
 
         StartEvent* se = new StartEvent("start");
-        se->addNVP("x", "7");
+        se->addNVP("x", 7);
         se->setOutgoingNodeId("testGate");
 
         p->addProcessNode(StartEventPtr(se));
@@ -132,7 +133,7 @@ public:
         EndEvent* endEventC = new EndEvent("endC");
 
         StartEvent* se = new StartEvent("start");
-        se->addNVP("x", "5");
+        se->addNVP("x", 5);
         se->setOutgoingNodeId("testGate");
 
         p->addProcessNode(StartEventPtr(se));
@@ -163,7 +164,7 @@ public:
         EndEvent* endEventC = new EndEvent("endC");
 
         StartEvent* se = new StartEvent("start");
-        se->addNVP("x", "-1");
+        se->addNVP("x", -1);
         se->setOutgoingNodeId("testGate");
 
         p->addProcessNode(StartEventPtr(se));

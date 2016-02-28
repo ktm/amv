@@ -48,15 +48,7 @@ class Context {
         return *list;
     }
 
-    ContextChangePtr _write(string name, int value) {
-        return _write(name, to_string(value));
-    }
-
-    ContextChangePtr _write(string name, double value) {
-        return _write(name, to_string(value));
-    }
-
-    ContextChangePtr _write(string name, string value) {
+    ContextChangePtr _write(string name, Value value) {
         std::lock_guard<std::mutex> data_lock(data_mutex);
 
         NameValuePairPtr npp = find(name);
@@ -68,7 +60,7 @@ class Context {
             contextData.push_back(npp);
             retval->first = true;
         } else {
-            retval->first = (0 != value.compare(npp->second));
+            retval->first = !value_compare(value, npp->second);
             npp->second = value;
             if (retval->first) {
                 chaiscript_gateway::Instance().write_to_js(name, value);
@@ -84,9 +76,9 @@ public:
         static Context CTX;
         return CTX;
     }
-
+/*
     NameValuePairPtr write(string name, int value) {
-        ContextChangePtr ccp = _write(name, value);
+        ContextChangePtr ccp = _write(name, Value(value));
         if (ccp->first) {
             // the context was changed, so publish the new value
             EventCallbackContainer::Instance().fireEvent(name, ccp->second);
@@ -95,7 +87,7 @@ public:
     }
 
     NameValuePairPtr write(string name, double value) {
-        ContextChangePtr ccp = _write(name, value);
+        ContextChangePtr ccp = _write(name, Value(value));
         if (ccp->first) {
             // the context was changed, so publish the new value
             EventCallbackContainer::Instance().fireEvent(name, ccp->second);
@@ -104,6 +96,15 @@ public:
     }
 
     NameValuePairPtr write(string name, string value) {
+        ContextChangePtr ccp = _write(name, Value(value));
+        if (ccp->first) {
+            // the context was changed, so publish the new value
+            EventCallbackContainer::Instance().fireEvent(name, ccp->second);
+        }
+        return ccp->second;
+    }
+*/
+    NameValuePairPtr write(string name, Value value) {
         ContextChangePtr ccp = _write(name, value);
         if (ccp->first) {
             // the context was changed, so publish the new value
@@ -112,13 +113,13 @@ public:
         return ccp->second;
     }
 
-    string read(string name) {
+    Value read(string name) {
         std::lock_guard<std::mutex> data_lock(data_mutex);
         NameValuePairPtr npp = find(name);
         if (npp != nullptr) {
             return npp->second;
         }
-        return "";  // really want to return nullptr here but it breaks stuff
+        return Value();  // really want to return nullptr here but it breaks stuff
     }
 };
 

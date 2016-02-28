@@ -16,7 +16,6 @@ set(SOURCE_FILES test/test.cpp
         src/model/event_callback_container.hxx
         test/EventCallbackTest.h
         test/jstest.h
-        src/script/script_gateway.h
         src/script/chaiscript_gateway.h
         src/script/chaiscript_gateway.cpp
         src/serial/serial.h
@@ -24,6 +23,7 @@ set(SOURCE_FILES test/test.cpp
         src/gps/gps.h
         src/gps/gps.cpp
         src/gps/nmea.h
-        src/gps/nmea.cpp)
+        src/gps/nmea.cpp
+        src/collection/name_value_pair.cpp)
 
 add_executable(amvmodel ${SOURCE_FILES})

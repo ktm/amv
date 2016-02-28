@@ -17,7 +17,7 @@
 using namespace std;
 
 enum class ProcessNodeT {
-    serviceTask, intermediateCatchEvent, exclusiveGateway, startEvent, endEvent, signalEvent
+    scriptTask, intermediateCatchEvent, exclusiveGateway, startEvent, endEvent, signalEvent
 };
 
 class ProcessNode {
@@ -26,7 +26,7 @@ class ProcessNode {
     std::string outgoingSequenceId;
 
 protected:
-    std::string id;
+    std::string id = "NA";
 
 public:
     ProcessNode(ProcessNodeT t) : elementType(t) {}
@@ -38,7 +38,9 @@ public:
     }
 
     void setId(const char* idarg) {
-        id = idarg;
+        if (idarg != nullptr) {
+            id = idarg;
+        }
     }
 
     void setId(string idarg) {
@@ -57,7 +59,7 @@ public:
     }
 
     bool matches(string idarg) {
-        return getId() == idarg;
+        return (getId().compare(idarg) == 0);
     }
 
     virtual std::string getNextNodeId() {
@@ -67,12 +69,12 @@ public:
 
 using ProcessNodePtr = shared_ptr<ProcessNode>;
 
-class ServiceTask: public ProcessNode {
-    std::string functionName;
-    std::vector<std::string> paramNames;
+class ScriptTask: public ProcessNode {
+    std::string fileName;
 
 public:
-    ServiceTask() : ProcessNode(ProcessNodeT::serviceTask) {}
+    ScriptTask(std::string idarg, std::string filenamearg) :
+            ProcessNode(ProcessNodeT::scriptTask, idarg), fileName(filenamearg) {}
     void execute();
 };
 

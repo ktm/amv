@@ -37,24 +37,29 @@ public:
     }
 
     static void testSingleUpdate() {
-
         Context& c1 = Context::Instance();
+
         c1.write("test", "frog");
-        string xval = c1.read("test");
+        Value val = c1.read("test");
+        std::string xval = boost::get<std::string>(val);
         assert(xval.compare("frog") == 0);
 
         c1.write("test", "pig");
-        xval = c1.read("test");
+        val = c1.read("test");
+        xval = boost::get<std::string>(val);
         assert(xval.compare("pig") == 0);
 
         cout << "testSingleUpdate passed" << endl;
     }
 
-    static void testSingleSetAndGet(string name, string val) {
+    static void testSingleSetAndGet(string name, std::string rval) {
         Context& c1 = Context::Instance();
-        c1.write(name, val);
-        string xval = c1.read(name);
-        assert(xval.compare(val) == 0);
+        c1.write(name, rval);
+
+        Value val = c1.read(name);
+        std::string xval = boost::get<std::string>(val);
+
+        assert(xval.compare(rval) == 0);
         cout << "testSingleSetAndGet passed" << endl;
     }
 

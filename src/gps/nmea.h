@@ -4,12 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string>
 
 #define _EMPTY 0x00
 #define NMEA_GPRMC 0x01
-#define NMEA_GPRMC_STR "$GPRMC"
 #define NMEA_GPGGA 0x02
-#define NMEA_GPGGA_STR "$GPGGA"
 #define NMEA_UNKNOWN 0x00
 #define _COMPLETED 0x03
 
@@ -44,10 +43,10 @@ struct gprmc {
 };
 typedef struct gprmc gprmc_t;
 
-uint8_t nmea_get_message_type(const char *);
-uint8_t nmea_valid_checksum(const char *);
-void nmea_parse_gpgga(char *, gpgga_t *);
-void nmea_parse_gprmc(char *, gprmc_t *);
+uint8_t nmea_get_message_type(std::string);
+uint8_t nmea_valid_checksum(std::string);
+void nmea_parse_gpgga(std::string, gpgga_t *);
+void nmea_parse_gprmc(std::string, gprmc_t *);
 
 #endif
 

@@ -15,13 +15,17 @@ int update_gps_location(int fd) {
     while(status != _COMPLETED) {
         gpgga_t gpgga;
         gprmc_t gprmc;
-        char buffer[256];
 
-        if (serial_readln(fd, buffer, 256) < 10) {
+        std::string line;
+        const char* buffer;
+
+        if (serial_readln(fd, line, 256) < 10) {
             return -1;
         }
 
-        switch (nmea_get_message_type(buffer)) {
+        buffer = line.c_str();
+
+        switch (nmea_get_message_type(std::string(buffer))) {
             case NMEA_GPGGA:
                 nmea_parse_gpgga(buffer, &gpgga);
 
