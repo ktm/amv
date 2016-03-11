@@ -34,23 +34,12 @@ public:
         auto info = bv.get_type_info();
 
         return chaiscript::boxed_cast<ValueType>(bv);
-/*
-        if (typeid(int) == *info.bare_type_info()) {
-            return Value(chaiscript::boxed_cast<int>(bv));
-        }
-        if (typeid(double) == *info.bare_type_info()) {
-            return Value(chaiscript::boxed_cast<double>(bv));
-        }
-        if (typeid(std::string) == *info.bare_type_info()) {
-            std::string& string_ref = chaiscript::boxed_cast<std::string&>(bv);
-
-            Value v(string_ref);
-
-            return v;
-        }
-        return Value();
-*/
     }
+
+    template<typename Ret, typename ... Param>
+    void registerFunction(Ret (*func)(Param...), std::string name) {
+        js_context.add(chaiscript::fun(func), name);
+    };
 };
 
 

@@ -14,6 +14,7 @@ std::string fxn() {
 
 class JSTest {
     int gpsFD;
+
 public:
     JSTest() { }
 

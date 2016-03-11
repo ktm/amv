@@ -9,14 +9,7 @@
 #include "../serial/serial.h"
 #include "../model/context.hxx"
 
-chaiscript_gateway::chaiscript_gateway(): js_context(chaiscript::Std_Lib::library()) {
-    js_context.add(chaiscript::fun(&serial_init),    "serialInit");
-    js_context.add(chaiscript::fun(&serial_config),  "serialConfig");
-    js_context.add(chaiscript::fun(&serial_println), "serialWrite");
-    js_context.add(chaiscript::fun(&serial_readln),  "serialRead");
-    js_context.add(chaiscript::fun(&serial_close),  "serialClose");
-    js_context.add(chaiscript::fun(&update_gps_location),  "updateGPS");
-}
+chaiscript_gateway::chaiscript_gateway(): js_context(chaiscript::Std_Lib::library()) { }
 
 bool chaiscript_gateway::evaluate_condition(std::string condition) {
     std::cout << "conditional: " << condition << std::endl;
