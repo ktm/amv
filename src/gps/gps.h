@@ -1,6 +1,8 @@
 #ifndef _GPS_H_
 #define _GPS_H_
 
+#include <string>
+
 struct location {
     double latitude;
     double longitude;
@@ -12,7 +14,7 @@ typedef struct location loc_t;
 
 
 // Get the actual location
-int update_gps_location(int fd);
+uint8_t process_gps_location(std::string, uint8_t);
 
 
 // -------------------------------------------------------------------------
