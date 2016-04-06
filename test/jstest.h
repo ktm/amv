@@ -5,7 +5,7 @@
 #ifndef AMVMODEL_JAVASCRIPT_H
 #define AMVMODEL_JAVASCRIPT_H
 
-#include "../src/serial/serial.h"
+#include "../src/serial/serial.hxx"
 #include "../src/gps/gps.h"
 
 std::string fxn() {

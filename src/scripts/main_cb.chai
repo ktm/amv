@@ -1,0 +1,23 @@
+print ("begin")
+
+class Test  {
+    var data;
+
+    def func(str) {
+        print("3");
+        print(str)
+        return str;
+    }
+
+    def Test(x) {
+        print("4");
+        this.data = x;
+    }
+}
+
+print("5");
+
+var t = Test(99);
+
+print("done");
+

@@ -5,53 +5,43 @@
 #include <math.h>
 
 #include "nmea.h"
-#include "../serial/serial.h"
+#include "../serial/serial.hxx"
 #include "../model/context.hxx"
 
 // Compute the GPS location using decimal scale
-int update_gps_location(int fd) {
+uint8_t process_gps_location(std::string gpsrecord, uint8_t status) {
     loc_t coord;
-    uint8_t status = _EMPTY;
-    while(status != _COMPLETED) {
+
         gpgga_t gpgga;
         gprmc_t gprmc;
 
-        std::string line;
-        const char* buffer;
-
-        if (serial_readln(fd, line, 256) < 10) {
-            return -1;
-        }
-
-        buffer = line.c_str();
-
-        switch (nmea_get_message_type(std::string(buffer))) {
+        switch (nmea_get_message_type(gpsrecord)) {
             case NMEA_GPGGA:
-                nmea_parse_gpgga(buffer, &gpgga);
+                nmea_parse_gpgga(gpsrecord, &gpgga);
 
                 gps_convert_deg_to_dec(&(gpgga.latitude), gpgga.lat, &(gpgga.longitude), gpgga.lon);
 
                 coord.latitude = gpgga.latitude;
                 coord.longitude = gpgga.longitude;
                 coord.altitude = gpgga.altitude;
-                Context::Instance().write("gps.latitude", coord.latitude);
-                Context::Instance().write("gps.longitude", coord.longitude);
-                Context::Instance().write("gps.altitude", coord.altitude);
+                Context::Instance().write("gps_latitude", coord.latitude);
+                Context::Instance().write("gps_longitude", coord.longitude);
+                Context::Instance().write("gps_altitude", coord.altitude);
                 status |= NMEA_GPGGA;
                 break;
             case NMEA_GPRMC:
-                nmea_parse_gprmc(buffer, &gprmc);
+                nmea_parse_gprmc(gpsrecord, &gprmc);
 
                 coord.speed = gprmc.speed;
                 coord.course = gprmc.course;
 
-                Context::Instance().write("gps.speed", coord.speed);
-                Context::Instance().write("gps.course", coord.course);
+                Context::Instance().write("gps_speed", coord.speed);
+                Context::Instance().write("gps_course", coord.course);
                 status |= NMEA_GPRMC;
                 break;
         }
-    }
-    return 1;
+
+    return status;
 }
 
 // Convert lat e lon to decimals (from deg)

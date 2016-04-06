@@ -76,34 +76,7 @@ public:
         static Context CTX;
         return CTX;
     }
-/*
-    NameValuePairPtr write(string name, int value) {
-        ContextChangePtr ccp = _write(name, Value(value));
-        if (ccp->first) {
-            // the context was changed, so publish the new value
-            EventCallbackContainer::Instance().fireEvent(name, ccp->second);
-        }
-        return ccp->second;
-    }
 
-    NameValuePairPtr write(string name, double value) {
-        ContextChangePtr ccp = _write(name, Value(value));
-        if (ccp->first) {
-            // the context was changed, so publish the new value
-            EventCallbackContainer::Instance().fireEvent(name, ccp->second);
-        }
-        return ccp->second;
-    }
-
-    NameValuePairPtr write(string name, string value) {
-        ContextChangePtr ccp = _write(name, Value(value));
-        if (ccp->first) {
-            // the context was changed, so publish the new value
-            EventCallbackContainer::Instance().fireEvent(name, ccp->second);
-        }
-        return ccp->second;
-    }
-*/
     NameValuePairPtr write(string name, Value value) {
         ContextChangePtr ccp = _write(name, value);
         if (ccp->first) {
@@ -122,5 +95,6 @@ public:
         return Value();  // really want to return nullptr here but it breaks stuff
     }
 };
+
 
 #endif //AMVMODEL_CONTEXT_H

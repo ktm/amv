@@ -1,0 +1,33 @@
+class AMV
+{
+    // user data
+    var data
+
+    // constructor
+    def AMV(x) {
+    this.data = x
+}
+
+    // method
+    def doTimer(str) {
+    print(str)
+        return "XXX";
+    }
+}
+
+var t = AMV(10)
+
+
+var servoPort = "/dev/ttyACM0"
+print("servoPort: " + servoPort)
+
+//var servoFD = serialInit(servoPort)
+
+//print("servoFD: ")
+//print(servoFD)
+
+//writeContext("servoFD", servoFD)
+
+//serialWrite(servoFD, "XXXX")
+print("done")
+

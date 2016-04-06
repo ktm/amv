@@ -23,7 +23,10 @@ public:
     }
 
     bool evaluate_condition(std::string condition);
+    void call_function(std::string fxn);
     void write_to_js(std::string name, Value value);
+    void write_from_js(std::string name, chaiscript::Boxed_Value v);
+
     std::string createCallString(std::string fxnname, std::vector<std::string> args);
 
     //TIL template fxn defs go in the header, otherwise the linker fails
@@ -39,7 +42,11 @@ public:
     template<typename Ret, typename ... Param>
     void registerFunction(Ret (*func)(Param...), std::string name) {
         js_context.add(chaiscript::fun(func), name);
-    };
+    }
+
+    chaiscript::Boxed_Value evaluateFile(std::string fname) {
+        return js_context.eval_file(fname);
+    }
 };
 
 
