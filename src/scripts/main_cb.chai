@@ -1,23 +1,19 @@
 print ("begin")
 
-class Test  {
-    var data;
+class AMV  {
 
-    def func(str) {
-        print("3");
-        print(str)
-        return str;
+    def onTimer(str) {
+       print("onTimer");
+       return str;
     }
 
-    def Test(x) {
-        print("4");
-        this.data = x;
+    def AMV() {
     }
 }
 
-print("5");
 
-var t = Test(99);
+var amv = AMV();
+
 
 print("done");
 

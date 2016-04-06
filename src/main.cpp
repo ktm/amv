@@ -88,9 +88,8 @@ int main (int argc, char *argv[]) {
 
     if (argc > 1) {
         auto obj = chaiscript_gateway::Instance().evaluateFile(std::string(argv[1]));
-
-        scriptObject = chaiscript_gateway::Instance().js_context.eval("t");
-        funcObject = chaiscript_gateway::Instance().js_context.eval<std::function<std::string(chaiscript::Boxed_Value &, const std::string &)>>("func");
+        scriptObject = chaiscript_gateway::Instance().js_context.eval("amv");
+        funcObject = chaiscript_gateway::Instance().js_context.eval<std::function<std::string(chaiscript::Boxed_Value &, const std::string &)>>("onTimer");
 
         struct ev_loop *loop = EV_DEFAULT;
         ev_timer_init (&evTimer, timer_cb, 1., 5.);

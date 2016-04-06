@@ -1,33 +1,25 @@
-class AMV
-{
-    // user data
-    var data
+print ("begin")
 
-    // constructor
-    def AMV(x) {
-    this.data = x
-}
+class AMV  {
+    var servoFD
 
-    // method
-    def doTimer(str) {
-    print(str)
-        return "XXX";
+    def onTimer(str) {
+       print("onTimer");
+
+//       serialWrite(this.servoFD, "XXXX")
+       return "onTimer Done"
     }
+
+   def AMV() {
+      var servoPort = "/dev/ttyACM0";
+      this.servoFD = "....";
+//    this.servoFD = serialInit(servoPort)
+
+      writeContext("servoFD", this.servoFD);
+   }
 }
 
-var t = AMV(10)
+var amv = AMV();
 
-
-var servoPort = "/dev/ttyACM0"
-print("servoPort: " + servoPort)
-
-//var servoFD = serialInit(servoPort)
-
-//print("servoFD: ")
-//print(servoFD)
-
-//writeContext("servoFD", servoFD)
-
-//serialWrite(servoFD, "XXXX")
 print("done")
 
