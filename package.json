@@ -1,0 +1,12 @@
+{
+  "name": "amv",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/main.js"
+  },
+  "dependencies": {
+    "bpmn": "^0.2.2",
+    "debug": "~2.2.0"
+  }
+}
