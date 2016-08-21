@@ -2,7 +2,7 @@ print("begin gps.chai")
 var gpsPort = "/dev/ttyUSB0"
 print("gpsPort: " + gpsPort)
 
-var gpsFD = serialInit(gpsPort)
+var gpsFD = initGPS(gpsPort)
 
 print("gpsFD: ")
 print(gpsFD)

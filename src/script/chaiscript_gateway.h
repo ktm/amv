@@ -10,6 +10,7 @@
 #include <boost/variant.hpp>
 #include "../collection/name_value_pair.hxx"
 
+
 class chaiscript_gateway {
     std::mutex data_mutex;
     double toNumber(std::string arg);

@@ -6,7 +6,7 @@
 #define AMVMODEL_JAVASCRIPT_H
 
 #include "../src/serial/serial.hxx"
-#include "../src/gps/gps.h"
+#include "../src/gps/gps.hxx"
 
 std::string fxn() {
     return "Hello World!";

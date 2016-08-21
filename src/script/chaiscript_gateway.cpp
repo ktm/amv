@@ -5,8 +5,7 @@
 #include <chaiscript/chaiscript.hpp>
 #include <chaiscript/chaiscript_stdlib.hpp>
 #include "chaiscript_gateway.h"
-#include "../gps/gps.h"
-#include "../serial/serial.hxx"
+#include "../gps/gps.hxx"
 #include "../model/context.hxx"
 
 chaiscript_gateway::chaiscript_gateway(): js_context(chaiscript::Std_Lib::library()) { }

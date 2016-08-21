@@ -1,15 +1,21 @@
-#include "gps.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "gps.hxx"
 
-#include <math.h>
-
-#include "nmea.h"
-#include "../serial/serial.hxx"
 #include "../model/context.hxx"
 
+gps::gps(std::string port_name) {
+serial_id = amv_config->serial()->serial_init(port_name);
+}
+
+void gps::update_gps_location() {
+    uint8_t gps_status = _EMPTY;
+    while (gps_status != _COMPLETED) {
+        gps_status = process_gps_location(amv_config->serial()->read_line(serial_id), gps_status);
+    }
+}
+
+
 // Compute the GPS location using decimal scale
-uint8_t process_gps_location(std::string gpsrecord, uint8_t status) {
+uint8_t gps::process_gps_location(std::string gpsrecord, uint8_t status) {
     loc_t coord;
 
         gpgga_t gpgga;
@@ -45,7 +51,7 @@ uint8_t process_gps_location(std::string gpsrecord, uint8_t status) {
 }
 
 // Convert lat e lon to decimals (from deg)
-void gps_convert_deg_to_dec(double *latitude, char ns,  double *longitude, char we)
+void gps::gps_convert_deg_to_dec(double *latitude, char ns,  double *longitude, char we)
 {
     double lat = (ns == 'N') ? *latitude : -1 * (*latitude);
     double lon = (we == 'E') ? *longitude : -1 * (*longitude);
@@ -54,7 +60,7 @@ void gps_convert_deg_to_dec(double *latitude, char ns,  double *longitude, char 
     *longitude = gps_deg_dec(lon);
 }
 
-double gps_deg_dec(double deg_point)
+double gps::gps_deg_dec(double deg_point)
 {
     double ddeg;
     double sec = modf(deg_point, &ddeg)*60;

@@ -67,6 +67,10 @@ public:
         }
     }
 
+    void close() {
+        serial.close();
+    }
+
 private:
     boost::asio::io_service io;
     boost::asio::serial_port serial;
