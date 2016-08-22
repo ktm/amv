@@ -13,7 +13,7 @@ exports.defaultErrorHandler = function(error, done) {
 
 var loop = 0;
 
-exports.AdjustCourse = function(data) {
+exports.AdjustCourse = function(data, done) {
     // has to return true or false
     // the name of the sequence flow follows after "$".
     // if there is no name, an error is thrown
