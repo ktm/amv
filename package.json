@@ -7,6 +7,8 @@
   },
   "dependencies": {
     "bpmn": "^0.2.2",
-    "debug": "~2.2.0"
+    "debug": "~2.2.0",
+    "firmata": "^0.14.1",
+    "johnny-five": "^0.10.0"
   }
 }

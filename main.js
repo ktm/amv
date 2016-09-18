@@ -1,7 +1,17 @@
-#!/usr/bin/env node
+"use strict"
 
-const bpmn = require('bpmn');
+const config = require('./config.json');
+const missionProcess = require(config.mission);
 
-bpmn.createUnmanagedProcess(__dirname + '/bpmn/navigate.bpmn', function(err, myProcess){
-    myProcess.triggerEvent("NavigateStartEvent");
+
+const state = require('./state');
+const five = require('johnny-five');
+
+var board = new five.Board({ port: config.johnnyFivePort });
+
+board.on("ready", function() {
+    state.boardReady = true;
+    console.log("board ready");
+    missionProcess.run();
 });
+
