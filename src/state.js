@@ -27,7 +27,7 @@ var State = (function () {
         this.inactiveTimer = 3000;
         this.currentLocation = new Location(0, 0);
         this.currentDestination = new Location(0, 0);
-        this.currentCourse = 0;
+        this.currentHeading = 0;
         this.currentSpeed = 0;
         this.missionTime = Date.now();
         this.boardReady = false;
@@ -44,6 +44,13 @@ var State = (function () {
             return this.missionPhase === MissionPhase.onstation;
         }
         return false;
+    };
+    State.prototype.setDestination = function(dest) {
+        this.currentDestination.lat = dest.lat;
+        this.currentDestination.long = dest.long;
+    };
+    State.prototype.setHeading = function(arg) {
+        this.currentHeading = arg;
     };
     return State;
 }());

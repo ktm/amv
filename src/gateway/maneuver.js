@@ -5,7 +5,7 @@
 "use strict";
 
 const state = require('../state');
-
+const Location = require('../state').Location;
 const five = require('johnny-five');
 
 exports.initSteering = function() {
@@ -18,8 +18,6 @@ exports.initSteering = function() {
         startAt: 90,
 
     });
-
-    console.log("initSteering");
 
     servo.center();
 };

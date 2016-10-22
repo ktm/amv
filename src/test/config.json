@@ -1,0 +1,10 @@
+{
+  "destination": {
+    "lat": 34.067373,
+    "long": -84.456586
+  },
+  "nav": "/bpmn/navigate.bpmn",
+  "mission": "../missionfactory.js",
+  "johnnyFivePort": "/dev/ttyUSB0"
+}
+

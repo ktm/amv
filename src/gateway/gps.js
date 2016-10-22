@@ -21,15 +21,14 @@ exports.initGPS = function() {
         },
         frequency: .1,   //  "$PMTK220," + String(1000 / state.frequency)
     });
-    // If latitude, longitude change log it
+
     gps.on("change", function() {
-        console.log("GPS change " + new Date());
         state.globalState.currentLocation.lat = this.latitude;
         state.globalState.currentLocation.long = this.long;
     });
-    // If speed, course change log it
+
     gps.on("navigation", function() {
-        state.globalState.currentCourse = this.course;
+        state.globalState.currentHeading = this.course;
         state.globalState.currentSpeed = this.speed;
     });
 };

@@ -13,7 +13,6 @@ function defaultErrorHandler(error, done) {
 exports.defaultErrorHandler = defaultErrorHandler;
 ;
 function report(data, done) {
-    console.log("         Observe report " + (Date.now() - state_1.globalState.missionTime));
     done(data);
 }
 exports.report = report;
@@ -35,5 +34,5 @@ function cvTimer$getTimeout(data, done) {
     return state_1.globalState.inactiveTimer;
 }
 exports.cvTimer$getTimeout = cvTimer$getTimeout;
-;
+
 //# sourceMappingURL=observe.js.map

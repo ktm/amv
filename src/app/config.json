@@ -4,7 +4,7 @@
     "long": -84.456586
   },
   "nav": "/bpmn/navigate.bpmn",
-  "mission": "./missionfactory.js",
+  "mission": "../missionfactory.js",
   "johnnyFivePort": "/dev/ttyUSB0"
 }
 

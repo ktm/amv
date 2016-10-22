@@ -1,0 +1,26 @@
+[
+  {
+    "destination": {
+      "lat": 34.067373,
+      "long": -84.456586
+    },
+    "currentLocation": {
+      "lat": 34.067373,
+      "long": -84.472303
+    },
+    "currentSpeed": 5,
+    "currentHeading": 0
+  },
+  {
+    "destination": {
+      "lat": 34.067373,
+      "long": -84.456586
+    },
+    "currentLocation": {
+      "lat": 38.087640,
+      "long": -84.456586
+    },
+    "currentSpeed": 4,
+    "currentHeading": 0
+  }
+]
