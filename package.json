@@ -3,13 +3,28 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/main.js"
+    "start": "node ./bin/main.js",
+    "test": "node ./bin/test.js",
+    "lint": "eslint src/**/*.js",
+    "pretest": "npm run lint",
+    "build:clean": "",
+    "prebuild": "npm run build:clean",
+    "build": ""
+  },
+  "jshintConfig": {
+    "esnext": "true",
+    "noyield": "true"
   },
   "dependencies": {
     "bpmn": "^0.2.2",
     "debug": "~2.2.0",
     "firmata": "^0.14.1",
-    "johnny-five": "^0.10.0",
-    "turf": "^3.0.14"
+    "johnny-five": "^0.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.8.1",
+    "mocha": "^2.3.2",
+    "should": "^7.1.0",
+    "supertest": "^1.1.0"
   }
 }

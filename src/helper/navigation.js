@@ -3,8 +3,6 @@
  */
 "use strict";
 
-const turf = require('turf');
-
 function radians(degrees) {
     var pix = Math.PI / 180;
     return degrees * pix;
@@ -15,8 +13,8 @@ function degrees(radians) {
 }
 
 exports.calculateHeading = function (lat1, long1, lat2, long2, currentHeading) {
-  return deltaCourse(currentHeading, courseTo(lat1, long1, lat2, long2));
-}
+    return deltaCourse(currentHeading, courseTo(lat1, long1, lat2, long2));
+};
 
 // below are adapted from https://github.com/mikalhart/TinyGPSPlus
 function courseTo(lat1, long1, lat2, long2) {
@@ -45,7 +43,7 @@ function deltaCourse(currentCourse, newCourse) {
     return (360 + newCourse - currentCourse) % 360;
 }
 
-function distanceBetween(lat1, long1, lat2, long2) {
+exports.distanceBetween = function(lat1, long1, lat2, long2) {
     // returns distance in meters between two positions, both specified
     // as signed decimal-degrees latitude and longitude. Uses great-circle
     // distance computation for hypothetical sphere of radius 6372795 meters.
@@ -67,4 +65,4 @@ function distanceBetween(lat1, long1, lat2, long2) {
     var denom = (slat1 * slat2) + (clat1 * clat2 * cdlong);
     delta = Math.atan2(delta, denom);
     return delta * 6372795;
-}
+};

@@ -4,29 +4,30 @@ function defaultEventHandler(eventType, currentFlowObjectName, handlerName, reas
     done();
 }
 exports.defaultEventHandler = defaultEventHandler;
-;
+
 function defaultErrorHandler(error, done) {
     // Called if errors are thrown in the event handlers
-    console.log("defaultErrorHandler " + error);
     done();
 }
 exports.defaultErrorHandler = defaultErrorHandler;
-;
+
 function report(data, done) {
     done(data);
 }
 exports.report = report;
-;
+
 function keepGoing$yes(data) {
+
     return true;
 }
 exports.keepGoing$yes = keepGoing$yes;
-;
+
 function keepGoing$no(data) {
+
     return false;
 }
 exports.keepGoing$no = keepGoing$no;
-;
+
 function cvTimer$getTimeout(data, done) {
     if (state_1.globalState.isOnStation()) {
         return state_1.globalState.observationTimer;
@@ -34,5 +35,3 @@ function cvTimer$getTimeout(data, done) {
     return state_1.globalState.inactiveTimer;
 }
 exports.cvTimer$getTimeout = cvTimer$getTimeout;
-
-//# sourceMappingURL=observe.js.map

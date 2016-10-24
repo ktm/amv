@@ -3,16 +3,15 @@
 /**
  * Created by ktm on 9/3/16.
  */
-const state = require('../state');
+const state = require("../state");
 
-const five = require('johnny-five');
+const five = require("johnny-five");
 
 exports.initGPS = function() {
     if ( (state.gpsReady) || (!state.boardReady)) {
         return;
     }
     state.gpsReady = true;
-    console.log("initGPS");
     var gps = new five.GPS({
         breakout: "ADAFRUIT_ULTIMATE_GPS",
         pins: {

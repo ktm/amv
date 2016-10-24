@@ -3,16 +3,14 @@
  */
 
 "use strict";
-const config = require('./config.json');
-const simstate = require('./sim.json');
-const state = require('./../state');
+const simstate = require("./sim.json");
+const state = require("./../state");
 
 
 exports.run = function() {
     var counter = 0;
 
     var interval = setInterval( function() {
-        console.log(simstate[counter].currentLocation.lat + "," + simstate[counter].currentLocation.long);
         state.globalState.setLat(simstate[counter].currentLocation.lat);
         state.globalState.setLong(simstate[counter].currentLocation.long);
         state.globalState.setDestination(simstate[counter].destination);
@@ -24,4 +22,4 @@ exports.run = function() {
         // read a line from sim.json
         // post state updates
     }, 10000);
-}
+};

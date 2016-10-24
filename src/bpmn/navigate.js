@@ -1,6 +1,6 @@
 "use strict";
 var state = require("../state");
-const navHelper = require('../helper/navigation');
+const navHelper = require("../helper/navigation");
 
 function NavigateStartEvent(error, done) {
     done();
@@ -14,7 +14,6 @@ exports.defaultEventHandler = defaultEventHandler;
 
 function defaultErrorHandler(error, done) {
     // Called if errors are thrown in the event handlers
-    console.log("defaultErrorHandler " + error);
     done();
 }
 exports.defaultErrorHandler = defaultErrorHandler;
@@ -28,10 +27,10 @@ function AdjustCourse(data, done) {
         var long2 = state.globalState.currentDestination.long;
 
         var newHeading = navHelper.calculateHeading(lat1, long1, lat2, long2, state.globalState.currentHeading);
-//        var newDistance = navHelper.calculateDistance(state.globalState.currentLocation, state.globalState.currentDestination)
-        console.log("new heading: " + newHeading);
-        state.globalState.currentHeading = newHeading;
-//        console.log("new distance: "  + newDistance);
+        var newDistance = navHelper.distanceBetween(lat1, long1, lat2, long2);
+        if (newDistance > 100) {
+            state.globalState.currentHeading = newHeading;
+        }
     }
     done(data);
 }
@@ -40,7 +39,6 @@ exports.AdjustCourse = AdjustCourse;
 var changeCourse = true;
 function checkLocation(data, done) {
     changeCourse = !state.globalState.currentDestination.withinRange(state.globalState.currentLocation, state.globalState.navigationResolution);
-    console.log("change course: " + changeCourse);
     done(data);
 }
 exports.checkLocation = checkLocation;
