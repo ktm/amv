@@ -3,13 +3,15 @@
  */
 "use strict";
 
+var math = require('mathjs');
+
 function radians(degrees) {
-    var pix = Math.PI / 180;
+    var pix = math.PI / 180;
     return degrees * pix;
 }
 
 function degrees(radians) {
-    return radians * (180.0 / Math.PI);
+    return radians * (180.0 / math.PI);
 }
 
 exports.calculateHeading = function (lat1, long1, lat2, long2, currentHeading) {
@@ -27,13 +29,13 @@ function courseTo(lat1, long1, lat2, long2) {
     lat1 = radians(lat1);
     lat2 = radians(lat2);
 
-    var a1 = Math.sin(dlon) * Math.cos(lat2);
+    var a1 = math.sin(dlon) * math.cos(lat2);
 
-    var a2 = Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlon);
-    a2 = Math.cos(lat1) * Math.sin(lat2) - a2;
-    a2 = Math.atan2(a1, a2);
+    var a2 = math.sin(lat1) * math.cos(lat2) * math.cos(dlon);
+    a2 = math.cos(lat1) * math.sin(lat2) - a2;
+    a2 = math.atan2(a1, a2);
     if (a2 < 0.0) {
-        a2 += Math.PI * 2;
+        a2 += math.PI * 2;
     }
 
     return degrees(a2);
@@ -50,19 +52,25 @@ exports.distanceBetween = function(lat1, long1, lat2, long2) {
     // Because Earth is no exact sphere, rounding errors may be up to 0.5%.
     // Courtesy of Maarten Lamers
     var delta = radians(long1-long2);
-    var sdlong = Math.sin(delta);
-    var cdlong = Math.cos(delta);
+    var sdlong = math.sin(delta);
+    var cdlong = math.cos(delta);
     lat1 = radians(lat1);
     lat2 = radians(lat2);
-    var slat1 = Math.sin(lat1);
-    var clat1 = Math.cos(lat1);
-    var slat2 = Math.sin(lat2);
-    var clat2 = Math.cos(lat2);
+    var slat1 = math.sin(lat1);
+    var clat1 = math.cos(lat1);
+    var slat2 = math.sin(lat2);
+    var clat2 = math.cos(lat2);
     delta = (clat1 * slat2) - (slat1 * clat2 * cdlong);
-    delta = Math.sqr(delta);
-    delta += Math.sqr(clat2 * sdlong);
-    delta = Math.sqrt(delta);
+    delta = math.square(delta);
+    delta += math.square(clat2 * sdlong);
+    delta = math.sqrt(delta);
     var denom = (slat1 * slat2) + (clat1 * clat2 * cdlong);
-    delta = Math.atan2(delta, denom);
+    delta = math.atan2(delta, denom);
     return delta * 6372795;
 };
+
+
+exports.calculateCourseChange = function(currentCourse, newCourse) {
+    var courseChangeNeeded = (360 + newCourse - currentCourse) % 360;
+    return courseChangeNeeded;
+}

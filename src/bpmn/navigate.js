@@ -29,7 +29,8 @@ function AdjustCourse(data, done) {
         var newHeading = navHelper.calculateHeading(lat1, long1, lat2, long2, state.globalState.currentHeading);
         var newDistance = navHelper.distanceBetween(lat1, long1, lat2, long2);
         if (newDistance > 100) {
-            state.globalState.currentHeading = newHeading;
+            var courseChange = navHelper.calculateCourseChange(state.globalState.currentHeading,newHeading);
+            state.missionEventEmitter.emit("steer", courseChange);
         }
     }
     done(data);
@@ -58,4 +59,3 @@ function navTimer$getTimeout(data, done) {
 }
 exports.navTimer$getTimeout = navTimer$getTimeout;
 
-//# sourceMappingURL=navigate.js.map

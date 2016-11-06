@@ -1,4 +1,5 @@
 "use strict";
+
 var Location = (function () {
     function Location(lat, long) {
         this.lat = lat;
@@ -52,6 +53,16 @@ var State = (function () {
     State.prototype.setHeading = function(arg) {
         this.currentHeading = arg;
     };
+    State.prototype.changeHeading = function(newHeading) {
+//calculate instructions for the steering and fire event
+    };
     return State;
 }());
 exports.globalState = new State();
+
+const EventEmitter = require('events');
+
+class MissionEventEmitter extends EventEmitter{};
+
+exports.missionEventEmitter = new MissionEventEmitter();
+
