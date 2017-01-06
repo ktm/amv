@@ -22,5 +22,17 @@
     },
     "currentSpeed": 4,
     "currentHeading": 0
+  },
+  {
+  "destination": {
+    "lat": 34.067373,
+    "long": -84.456586
+  },
+  "currentLocation": {
+    "lat": 34.067373,
+    "long": -84.456586
+  },
+  "currentSpeed": 14,
+  "currentHeading": 0
   }
 ]

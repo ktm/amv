@@ -11,6 +11,7 @@ exports.run = function() {
     var counter = 0;
 
     var interval = setInterval( function() {
+        console.log("sim interval: " + counter);
         state.globalState.setLat(simstate[counter].currentLocation.lat);
         state.globalState.setLong(simstate[counter].currentLocation.long);
         state.globalState.setDestination(simstate[counter].destination);
@@ -18,8 +19,7 @@ exports.run = function() {
         counter++;
         if (counter == simstate.length) {
             clearInterval(interval);
+            console.log("sim complete");
         }
-        // read a line from sim.json
-        // post state updates
     }, 10000);
 };

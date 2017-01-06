@@ -9,6 +9,7 @@ const five = require("johnny-five");
 
 var escLeft = null;
 var escRight = null;
+var listenerReady = false;
 
 exports.initSteering = function() {
     if (!state.boardReady) {
@@ -20,6 +21,12 @@ exports.initSteering = function() {
 
     escLeft.min();
     escRight.min();
+};
+
+exports.initManeuverListener = function () {
+    if (listenerReady) {
+        return;
+    }
 
     state.missionEventEmitter.on('steer', (courseChange) => {
         if (courseChange >= 345 || courseChange < 15) {
@@ -38,6 +45,8 @@ exports.initSteering = function() {
         else
             console.log('about face!');
     });
+
+    listenerReady = true;
 };
 
 

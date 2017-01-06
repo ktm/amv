@@ -5,9 +5,6 @@ var Location = (function () {
         this.lat = lat;
         this.long = long;
     }
-    Location.prototype.withinRange = function (rhs, rangeInMeters) {
-        return false;
-    };
     return Location;
 }());
 exports.Location = Location;
